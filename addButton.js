@@ -34,7 +34,14 @@
 	  }
 	};
 	xhr.send();*/
-	var data2=localStorage.getItem('name');
+	var data2;
+	// Read it using the storage API
+    chrome.storage.sync.get(['name'], function(items) {
+      //message('Settings retrieved', items);
+	  data2 = items.name;
+	  console.log(data2);
+    });
+	//var data2=localStorage.getItem('name');
 
 	
 	var data=localStorage.getItem('links');  //récupérer la valeur
@@ -46,4 +53,3 @@
 
 //});
 console.log(data);
-console.log(data2);
