@@ -5,6 +5,7 @@
 	"description" :"Outil de facilitation",
 	//"default_locale": "fr",
 	"author": "Marcel Lebarre",
+	"options_page":"options.html",
 	"browser_action" :
 	{
 		"default_icon" : "icone1.jpg",
@@ -16,7 +17,7 @@
 		{
 		  "matches": ["https://genius.com/genius-france"],
 		  //"css": ["mystyles.css"],
-		  "js": ["jquery-3.3.1.min.js", "addButton.js"]
+		  "js": ["jquery-3.3.1.min.js", "less.min.js", "addButton.js"]
 		}
 	  ]
 }

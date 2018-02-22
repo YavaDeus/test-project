@@ -34,10 +34,8 @@
 	  }
 	};
 	xhr.send();*/
-	
-localStorage['links'] = [
-		"Genius Editor Helper"
-	];
+	var data2=localStorage.getItem('name');
+
 	
 	var data=localStorage.getItem('links');  //récupérer la valeur
 	/*localStorage.setItem(clef,valeur);  //donner une nouvelle valeur
@@ -48,3 +46,4 @@ localStorage['links'] = [
 
 //});
 console.log(data);
+console.log(data2);
