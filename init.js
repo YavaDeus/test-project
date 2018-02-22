@@ -23,7 +23,7 @@ function addTag()
 	//localStorage['links'] = ["bob"];
 	
 	// Save it using the Chrome extension storage API.
-    chrome.storage.sync.set({'name': name}, function() {
+    chrome.storage.sync.set({'name1': name}, function() {
       console.log('Settings saved');
     });
 	

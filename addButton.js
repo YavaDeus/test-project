@@ -34,17 +34,24 @@
 	  }
 	};
 	xhr.send();*/
+	var data1;
 	var data2;
 	// Read it using the storage API
-    chrome.storage.sync.get(['name'], function(items) {
+    chrome.storage.sync.get(['name1'], function(items) {
       //message('Settings retrieved', items);
-	  data2 = items.name;
+	  data1 = items.name1;
+	  console.log(data1);
+    });
+	
+	chrome.storage.sync.get(['name2'], function(items) {
+      //message('Settings retrieved', items);
+	  data2 = items.name2;
 	  console.log(data2);
     });
 	//var data2=localStorage.getItem('name');
 
 	
-	var data=localStorage.getItem('links');  //récupérer la valeur
+	//var data=localStorage.getItem('links');  //récupérer la valeur
 	/*localStorage.setItem(clef,valeur);  //donner une nouvelle valeur
 	localStorage.removeItem(clef);  //supprimer l'item
 	var clef=localStorage.key(n);  //récupérer la clef du n item.
@@ -52,4 +59,3 @@
 	localStorage.length();  //le nombre de clef de localStorage*/
 
 //});
-console.log(data);
