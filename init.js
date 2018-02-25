@@ -115,7 +115,7 @@ function appendActions(actions) {
 		var divActions = $("div.actions");
 		for (let item of actions) {
 			console.log(item);
-			var textLigne = '<div class="ligne"><a name="'+item.id+'" class="lien">' + item.name + '</a></div>';
+			var textLigne = '<div class="ligne level'+item.level+'"><a name="'+item.id+'" class="lien">' + item.name + '</a></div>';
 
 			divActions.append(textLigne);
 		}
@@ -132,35 +132,58 @@ function listActions(preLoad, forceReload, initEventsFunction) {
 				'actions': [{
 						'id': '0',
 						'url': 'https://genius.com/tags/france',
-						'name': 'Ouvrir Genius France'
+						'name': 'Ouvrir Genius France',
+						'level': '1'
 					},{
 						'id': '1',
-						'url': 'https://genius.com/Genius-france-fonctionnement-du-site-annotated',
-						'name': 'Fonctionnement du site'
-					}, {
+						'url': 'https://genius.com/albums/Genius-france/Guides-tutoriels',
+						'name': 'Album tutos',
+						'level': '1'
+					},{
 						'id': '2',
-						'url': 'https://genius.com/Genius-france-comment-ajouter-des-textes-sur-genius-annotated',
-						'name': 'Comment ajouter des textes'
+						'url': 'https://genius.com/Genius-france-fonctionnement-du-site-annotated',
+						'name': 'Fonctionnement du site',
+						'level': '2'
 					}, {
-						'id': '',
-						'url': 'https://genius.com/Genius-france-comment-annoter-correctement-annotated',
-						'name': 'Comment annoter correctement'
+						'id': '3',
+						'url': 'https://genius.com/Genius-france-comment-ajouter-des-textes-sur-genius-annotated',
+						'name': 'Comment ajouter des textes',
+						'level': '2'
 					}, {
 						'id': '4',
-						'url': 'https://genius.com/Genius-france-guide-basique-html-annotated',
-						'name': 'Guide basique HTML'
+						'url': 'https://genius.com/Genius-france-comment-annoter-correctement-annotated',
+						'name': 'Comment annoter correctement',
+						'level': '2'
 					}, {
 						'id': '5',
-						'url': 'https://genius.com/Genius-france-le-role-de-lediteur-annotated',
-						'name': 'Le rôle de l\'éditeur'
+						'url': 'https://genius.com/Genius-france-guide-basique-html-annotated',
+						'name': 'Guide basique HTML',
+						'level': '2'
 					}, {
 						'id': '6',
-						'url': 'https://genius.com/Genius-france-effectif-genius-france-annotated',
-						'name': 'Effectifs genius france'
+						'url': 'https://genius.com/Genius-france-le-role-de-lediteur-annotated',
+						'name': 'Le rôle de l\'éditeur',
+						'level': '2'
 					}, {
 						'id': '7',
+						'url': 'https://genius.com/Genius-france-effectif-genius-france-annotated',
+						'name': 'Effectifs genius france',
+						'level': '2'
+					}, {
+						'id': '8',
 						'url': 'https://genius.com/Genius-france-role-des-genius-annotated',
-						'name': 'Rôles des Genius'
+						'name': 'Rôles des Genius',
+						'level': '2'
+					}, {
+						'id': '9',
+						'url': 'https://genius.com/Education-genius-france-glossaire-des-figures-de-style-annotated',
+						'name': 'Glossaire des figures de style',
+						'level': '1'
+					}, {
+						'id': '10',
+						'url': 'https://genius.com/Genius-france-bannieres-annotated',
+						'name': 'Page des bannières Genius France',
+						'level': '1'
 					}
 				]
 			}, function () {
