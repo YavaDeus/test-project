@@ -1,3 +1,5 @@
-# test-project
+# Genius Editor Helper
 
-First editing
+Outil de facilitation pour les éditieurs Genius
+Travail en cours
+Premier projet Git
