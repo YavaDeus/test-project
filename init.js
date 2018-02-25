@@ -33,11 +33,35 @@
 //
 //}
 
+function openTab(url) {
+	console.log('open tab');
+	chrome.windows.getLastFocused(function (fenetre) {
+		chrome.tabs.query({
+			url: url
+		}, function (onglets) {
+			if (onglets[0]) {
+				chrome.tabs.update(onglets[0].id, {
+					highlighted: true,
+					active: true
+				}, function (onglet) {
+					console.log(onglet.url);
+				});
+			} else {
+				chrome.tabs.create({
+					url: url
+				}, function (onglet) {
+					console.log(onglet.url);
+				});
+			}
+		});
+	});
+}
+
 function appendTags(tags) {
 	if (tags) {
 		var divTags = $("div.tags");
 		for (let item of tags) {
-			var textLigne = '<div class="ligne"><span>' + item.name + '</span></div>';
+			var textLigne = '<div class="ligne"><span name="'+item.id+'">' + item.name + '</span></div>';
 
 			divTags.append(textLigne);
 		}
@@ -51,12 +75,15 @@ function listTags(preLoad, forceReload) {
 		if ((preLoad && items.tags === undefined) || forceReload) {
 			chrome.storage.sync.set({
 				'tags': [{
+						'id': '1',
 						'name': 'gras',
 						'value': '*'
 					}, {
-						'name': 'soulign√©',
+						'id': '2',
+						'name': 'soulignÈ',
 						'value': '__m'
 					}, {
+						'id': '3',
 						'name': 'italique',
 						'value': 'i--'
 					}
@@ -73,18 +100,29 @@ function listTags(preLoad, forceReload) {
 	});
 }
 
+function formatTarget(name) {
+	var target = name.replace();
+	//var re = /[^"/\\*?<>|:\]+_]/gi;
+	var re = /[.^ton_caract√®re_non_desir√©]/gi;
+	console.log(name);
+	console.log(target);
+	return target.replace(re, '');
+
+}
+
 function appendActions(actions) {
 	if (actions) {
 		var divActions = $("div.actions");
 		for (let item of actions) {
-			var textLigne = '<div class="ligne"><a href="' + item.url + '" target="_blank">' + item.name + '</a></div>';
+			console.log(item);
+			var textLigne = '<div class="ligne"><a name="'+item.id+'" class="lien">' + item.name + '</a></div>';
 
 			divActions.append(textLigne);
 		}
 	}
 }
 
-function listActions(preLoad, forceReload) {
+function listActions(preLoad, forceReload, initEventsFunction) {
 	console.log('List actions');
 
 	chrome.storage.sync.get(['actions'], function (items) {
@@ -92,38 +130,99 @@ function listActions(preLoad, forceReload) {
 		if ((preLoad && items.actions === undefined) || forceReload) {
 			chrome.storage.sync.set({
 				'actions': [{
-						'url': '//toto',
-						'name': 'Guide 1'
+						'id': '0',
+						'url': 'https://genius.com/tags/france',
+						'name': 'Ouvrir Genius France'
+					},{
+						'id': '1',
+						'url': 'https://genius.com/Genius-france-fonctionnement-du-site-annotated',
+						'name': 'Fonctionnement du site'
 					}, {
-						'url': '//titi',
-						'name': 'Guide 2'
+						'id': '2',
+						'url': 'https://genius.com/Genius-france-comment-ajouter-des-textes-sur-genius-annotated',
+						'name': 'Comment ajouter des textes'
 					}, {
-						'url': '//tete',
-						'name': 'iGuide 3'
+						'id': '',
+						'url': 'https://genius.com/Genius-france-comment-annoter-correctement-annotated',
+						'name': 'Comment annoter correctement'
+					}, {
+						'id': '4',
+						'url': 'https://genius.com/Genius-france-guide-basique-html-annotated',
+						'name': 'Guide basique HTML'
+					}, {
+						'id': '5',
+						'url': 'https://genius.com/Genius-france-le-role-de-lediteur-annotated',
+						'name': 'Le rÙle de l\'Èditeur'
+					}, {
+						'id': '6',
+						'url': 'https://genius.com/Genius-france-effectif-genius-france-annotated',
+						'name': 'Effectifs genius france'
+					}, {
+						'id': '7',
+						'url': 'https://genius.com/Genius-france-role-des-genius-annotated',
+						'name': 'RÙles des Genius'
 					}
 				]
 			}, function () {
 				console.log('Preload actions ok ');
 				chrome.storage.sync.get(['actions'], function (items) {
 					appendActions(items.actions);
+					initEventsFunction();
 				});
-			});
 
+			});
+		}
+		else{
+			initEventsFunction();
 		}
 
 	});
-
 }
 
 function initLists() {
 	var preLoad = true;
 	var forceReload = false;
 	listTags(preLoad, forceReload);
-	listActions(preLoad, forceReload);
+	listActions(preLoad, forceReload, initEvents);
 	console.log(' Init done ');
 }
 
+function initEvents() {
+	var liens = $(".lien");
+	chrome.storage.sync.get(['actions'], function (items) {
+		var iLien = 0;
+		for (let action of items.actions) {
+			var lien = $(".lien[name='" + action.id + "']")
+				lien.on("click", function() {openTab(action.url);});
+		}
+		console.log(' Events done ');
+	});
+}
+
+//function faireJoujou(fenetre) {
+//	console.log(fenetre[0]);
+//	//on fait joujou
+//	chrome.tabs.update(fenetre[0].id, {
+//		highlighted: true,
+//		active: true
+//	}, function (onglet) {
+//		console.log(onglet);
+//	});
+//
+//}
+//
+//function testFenetre() {
+//	chrome.windows.getLastFocused(function (fenetre) {
+//		chrome.tabs.query({
+//			url: "https://genius.com/tags/france"
+//		}, function (onglet) {
+//			faireJoujou(onglet);
+//		});
+//		//chrome.tabs.getSelected(fenetre.id,function(onglet){faireJoujou(onglet);});
+//	})
+//}
+
 document.addEventListener("DOMContentLoaded", function () {
 	initLists();
+	//initEvents();
 }, false);
-

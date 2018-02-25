@@ -3,6 +3,7 @@
 $("#nameButton").on("click", addTag);
 
 function addTag() {
+	chrome.tabs.create({url:"options.html"});
 
 	var name = $("#nameButton").attr("name");
 	console.log("name");
