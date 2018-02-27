@@ -57,12 +57,11 @@ function listTags(preLoad, forceReload) {
 function appendActions(addclass, actionList) {
 	if (actionList) {
 		var divActions = $(addclass);
-		//console.log(actionList);
 		for (let item of actionList.actions) {
 			var textLigne = '<div class="ligne level' + item.level + '"><a name="' + item.name + '" class="lien" '+(item.tooltip ? 'title="'+item.tooltip+'"' : '' )+'>' + item.label + '</a></div>';
-			//console.log(textLigne);
 			divActions.append(textLigne);
-			var lien = $("a.lien[name='" + item.name + "']")
+			
+			var lien = $("a.lien[name='" + item.name + "']");
 			lien.on("click", function () {
 				openTab(item.url);
 			});
@@ -70,7 +69,7 @@ function appendActions(addclass, actionList) {
 	}
 }
 
-function listActions(preLoad, forceReload/*, initEventsFunction*/) {
+function listActions(preLoad, forceReload) {
 	console.log('List actions');
 
 	chrome.storage.sync.get(['geniusActions'], function (items) {
@@ -82,14 +81,26 @@ function listActions(preLoad, forceReload/*, initEventsFunction*/) {
 				console.log('Preload actions ok');
 				chrome.storage.sync.get(['geniusActions'], function (items) {
 					appendActions("div.actions", new ActionList(items.geniusActions, 'GlobalLink'));
-					//initEventsFunction();
 				});
 
 			});
-		} else {
-			//initEventsFunction();
 		}
+	});
+}
 
+function listSavedPages(forceReload) {
+	console.log('List saved pages');
+
+	chrome.storage.sync.get(['geniusSavedPages'], function (items) {
+		appendActions("div.savedpages", new ActionList(items.geniusSavedPages, 'NavigationLink'));
+		if (forceReload) {
+			chrome.storage.sync.set({
+				'geniusSavedPages': {}
+			}, function () {
+				console.log('reset saved pages ok');
+
+			});
+		}
 	});
 }
 
@@ -97,45 +108,19 @@ function initLists() {
 	var preLoad = true;
 	var forceReload = false;
 	listTags(preLoad, forceReload);
-	listActions(preLoad, forceReload/*, initEventsAction*/);
+	listActions(preLoad, forceReload);
+	listSavedPages(forceReload);
 	console.log('Init done ');
 }
 
-/*function initEventsAction() {
-	chrome.storage.sync.get(['geniusActions'], function (items) {
-		appendEvents(new ActionList(items.geniusActions, 'GlobalLink'))
-	});
-}*/
-
-/*function initEventsLastPage() {
-	chrome.storage.sync.get(['geniusLastPage'], function (items) {
-		appendEvents(new ActionList(items.geniusLastPage, 'NavigationLink'));
-	});
-}*/
-
-/*function appendEvents(actionList) {
-	if (actionList) {
-		for (let action of actionList.actions) {
-			
-			var lien = $("a.lien[name='" + action.name + "']")
-				lien.on("click", function () {
-					openTab(action.url);
-				});
-		}
-		console.log('Events done');
-	}
-}*/
-
-function loadLastPage(/*initEventsFunction*/) {
+function loadLastPage() {
 	chrome.storage.sync.get(['geniusLastPage'], function (items) {
 		appendActions("div.lastpage", new ActionList(items.geniusLastPage, 'NavigationLink'));
-		//initEventsFunction();
 		console.log('Load last page done');
 	});
 }
 
 document.addEventListener("DOMContentLoaded", function () {
 	initLists();
-	//initEvents();
-	loadLastPage(/*initEventsLastPage*/);
+	loadLastPage();
 }, false);

@@ -74,7 +74,7 @@ class ActionList {
 	}
 
 	length() {
-		return actions.length;
+		return this.actions.length;
 	}
 
 	nextId() {
@@ -92,6 +92,67 @@ class ActionList {
 			action.name = action.getName();
 		}
 		this.actions.push(action);
+	}
+
+	deleteLevel(name)
+	{
+		let newListActions = new Array(0);
+		let level = 0;
+		let startDelete = false;
+		for (let item of this.actions) {
+			if (item.name == name)
+			{
+				level = item.level;
+				startDelete = true;
+			}
+			else if (!startDelete || item.level <= level) {
+				newListActions.push(item);
+				startDelete = false;
+			}
+		}
+		this.actions = newListActions;
+	}
+
+	countLevel(level)
+	{
+		const reducerLevel = (accumulator, currentValue) => accumulator + (currentValue.level == level ? 1 : 0);
+		return this.actions.reduce(reducerLevel, 0);
+	}
+
+	merge(list, nbMaxLevel1)
+	{
+		//Test d'élément déjà existant
+		let fisrtLevelAction = list.actions[0].url;
+		if (fisrtLevelAction.url)
+		{
+			for (let item of this.actions) {
+				if (item.url == fisrtLevelAction.url && item.level == fisrtLevelAction.level)
+					return;
+			}
+		}
+
+		//Concatenation
+		this.actions = this.actions.concat(list.actions);
+
+		//Recalcul des indexes
+		let id = 0;
+		for (let item of this.actions) {
+			item.id = id;
+			item.name = item.getName();
+			id ++;
+		}
+
+		//Gestion de la taille limite
+		let nbLevel1 = this.countLevel(1);
+		if (nbMaxLevel1 && nbMaxLevel1 < nbLevel1)
+		{
+			let difference = nbLevel1 - nbMaxLevel1;
+			for (let i = 0; i < difference; i++)
+			{
+				this.deleteLevel(this.actions[0].name);
+			}
+		}
+
 	}
 
 }
