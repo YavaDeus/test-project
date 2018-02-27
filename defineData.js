@@ -94,6 +94,18 @@ class ActionList {
 		this.actions.push(action);
 	}
 
+	addDedupe(action)
+	{
+		for (let item of this.actions) {
+			if (item.url == action.url && item.level == action.level && item.tooltip != action.tooltip)
+			{
+				item.tooltip = item.tooltip + ', ' + action.tooltip;
+				return;
+			}
+		}
+		this.add(action);
+	}
+
 	deleteLevel(name)
 	{
 		let newListActions = new Array(0);
@@ -122,7 +134,7 @@ class ActionList {
 	merge(list, nbMaxLevel1)
 	{
 		//Test d'élément déjà existant
-		let fisrtLevelAction = list.actions[0].url;
+		let fisrtLevelAction = list.actions[0];
 		if (fisrtLevelAction.url)
 		{
 			for (let item of this.actions) {
