@@ -15,8 +15,8 @@ function appendActions(actions) {
 function listActions() {
 	console.log('List actions');
 
-	chrome.storage.sync.get(['actions'], function (items) {
-		appendActions(items.actions);
+	chrome.storage.sync.get(['geniusActions'], function (items) {
+		appendActions(items.geniusActions);
 
 	});
 }
@@ -32,30 +32,3 @@ document.addEventListener("DOMContentLoaded", function () {
 }, false);
 
 
-//$("#nameButton").on("click", addTag);
-//
-//function addTag() {
-//	chrome.tabs.create({url:"options.html"});
-//
-//	var name = $("#nameButton").attr("name");
-//	console.log("name");
-//	console.log(name);
-//	//localStorage[' name '] = [name];
-//	//localStorage[' links '] = ["bob"];
-//
-//	// Save it using the Chrome extension storage API.
-//	chrome.storage.sync.get(['tags'], function (items) {
-//		var tags = items.tags;
-//		tags.push({
-//			'name': name,
-//			'value': 'op--'
-//		});
-//
-//		chrome.storage.sync.set({
-//			'tags': tags
-//		}, function () {
-//			console.log('Settings saved ');
-//		});
-//	});
-//
-//}
