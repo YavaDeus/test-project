@@ -17,7 +17,7 @@
 		{
 		  "matches": ["https://genius.com/*"],
 		  //"css": ["mystyles.css"],
-		  "js": ["jquery-3.3.1.min.js", "less.min.js", "addButton.js"]
+		  "js": ["jquery-3.3.1.min.js", "less.min.js", "defineData.js", "addButtons.js"]
 		}
 	],
 		"permissions": [
