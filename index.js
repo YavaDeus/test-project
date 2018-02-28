@@ -58,7 +58,14 @@ function appendActions(addclass, actionList) {
 	if (actionList) {
 		var divActions = $(addclass);
 		for (let item of actionList.actions) {
-			var textLigne = '<div class="ligne level' + item.level + '"><a name="' + item.name + '" class="lien" '+(item.tooltip ? 'title="'+item.tooltip+'"' : '' )+'>' + item.label + '</a></div>';
+			var textLigne = '<div class="ligne level' + item.level + '"><a name="' + item.name + '" class="lien" '+(item.tooltip ? 'title="'+item.tooltip+'"' : '' )+'>' + item.label + '</a>';
+			if (item.level == 1)
+			{
+				textLigne += SVGMaker.createActionCircle(14, addclass);
+				if (addclass != "div.lastpage")
+					textLigne += SVGMaker.createActionRemove(14, addclass);
+			}
+			textLigne += '</div>';
 			divActions.append(textLigne);
 			
 			var lien = $("a.lien[name='" + item.name + "']");
@@ -68,6 +75,7 @@ function appendActions(addclass, actionList) {
 		}
 	}
 }
+
 
 function listActions(preLoad, forceReload) {
 	console.log('List actions');

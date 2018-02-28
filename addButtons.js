@@ -53,7 +53,16 @@ function proceed()
 	if (theList.length() > 0)
 	{
 		var buttonContainer = $("h1.header_with_cover_art-primary_info-title").parent();
-		buttonContainer.append('<button id="savePage">Enregistrer la page</button>');
+
+		if (buttonContainer.length == 0)
+		{
+			buttonContainer = $("div.profile_identity-text");
+		}
+		var textButton = '<button id="savePage" title="Enregistrer dans Genius Editor Helper">';
+		textButton += SVGMaker.createActionCircle(14, "div.lastpage");
+		textButton += '</button>';
+		buttonContainer.append(textButton);
+		//buttonContainer.append('<button id="savePage">Enregistrer la page</button>');
 
 		var saveButton = $("button#savePage");
 		saveButton.on("click", function () {

@@ -168,3 +168,53 @@ class ActionList {
 	}
 
 }
+
+class SVGMaker {
+	constructor() {
+	}
+
+	static createActionCircle(size, groupe){
+		var balise = '';
+		if (groupe != "div.actions")
+		{
+			balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'">';
+			balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : ""))+'" stroke-width="'+(size/2)+'" fill="transparent" />';
+			balise += '<polygon points="0,20 5,21 5,27 14,14" style="fill:lime;stroke:purple;stroke-width:1" />';
+			balise += '</svg>';
+		}
+		return balise;
+	}
+
+	static createActionRemove(size, groupe){
+		var balise = '';
+		if (groupe != "div.actions")
+		{
+			balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'">';
+			balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
+			//balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" fill="red" filter="url(#f1)" />';
+
+			// balise += '<line x1="11" y1="11" x2="4" y2="4" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+			// balise += '<line x1="17" y1="17" x2="24" y2="24" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+			// balise += '<line x1="11" y1="17" x2="4" y2="24" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+			// balise += '<line x1="17" y1="11" x2="24" y2="4" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+
+			// balise += '<line x1="14" y1="12" x2="14" y2="2" style="stroke:rgb(255,0,0);stroke-width:1" />';
+			// balise += '<line x1="2" y1="14" x2="12" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
+			// balise += '<line x1="14" y1="16" x2="14" y2="28" style="stroke:rgb(255,0,0);stroke-width:1" />';
+			// balise += '<line x1="16" y1="14" x2="28" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
+
+			balise += '<line x1="9" y1="9" x2="6" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+			balise += '<line x1="19" y1="19" x2="22" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+			balise += '<line x1="9" y1="19" x2="6" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+			balise += '<line x1="19" y1="9" x2="22" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+
+			balise += '<line x1="14" y1="10" x2="14" y2="4" style="stroke:rgb(255,0,0);stroke-width:1" />';
+			balise += '<line x1="4" y1="14" x2="10" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
+			balise += '<line x1="14" y1="18" x2="14" y2="24" style="stroke:rgb(255,0,0);stroke-width:1" />';
+			balise += '<line x1="18" y1="14" x2="24" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
+			balise += '<polygon points="0,20 5,21 5,27 14,14" style="fill:red;stroke:purple;stroke-width:1" />';
+			balise += '</svg>';
+		}
+		return balise;
+	}
+}

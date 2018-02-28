@@ -8,7 +8,7 @@
 	"options_page":"options.html",
 	"browser_action" :
 	{
-		"default_icon" : "icone1.jpg",
+		"default_icon" : "icone2.png",
 		"default_title" : "Tune up your Genius",
 		"default_popup" :"index.html"
 	},
