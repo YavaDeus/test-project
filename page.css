@@ -1,0 +1,21 @@
+button#savePage
+{
+	/*margin:0;*/
+	cursor: pointer;
+	/*border: none;
+    margin: 0;
+    padding: 4px;*/
+}
+
+/*button#savePage:hover svg {
+	box-shadow: 1px 1px 12px #555;
+}*/
+
+button#savePage:hover {
+	box-shadow: 1px 1px 12px rgb(231, 231, 231);
+}
+
+
+
+
+
