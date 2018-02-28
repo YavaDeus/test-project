@@ -58,11 +58,10 @@ function proceed()
 		{
 			buttonContainer = $("div.profile_identity-text");
 		}
-		var textButton = '<button id="savePage" title="Enregistrer dans Genius Editor Helper">';
-		textButton += SVGMaker.createActionCircle(14, "div.lastpage");
+		var textButton = '<button id="savePage">';
+		textButton += SVGBuilder.createActionCircle("div.lastpage", "openGEH", "Mémoriser la page dans Genius Editor Helper", true);
 		textButton += '</button>';
 		buttonContainer.append(textButton);
-		//buttonContainer.append('<button id="savePage">Enregistrer la page</button>');
 
 		var saveButton = $("button#savePage");
 		saveButton.on("click", function () {

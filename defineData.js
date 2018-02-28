@@ -175,99 +175,133 @@ class StorageManager {
 
 	}
 
-	static addElement(storageName, element, callback)
+	static save(storageName, element, callback)
 	{
 
 	}
 
-	static removeElement(storageName, element, callback)
+	static read(storageName, element, callback)
 	{
 
 	}
 }
 
-class SVGMaker {
+class SVGBuilder {
 	constructor() {
 	}
 
-	static createActionCircle(size, groupe, name){
+	static createActionCircle(groupe, name, tooltip, drawArrow){
 		var balise = '';
 		if (groupe != "div.actions")
 		{
-			balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'" name="up'+name+'">';
-			balise += '<title>Mémoriser dans les '+(groupe == "div.lastpage" ? "pages courantes" : (groupe == "div.savedpages" ? "pages de référence" : "??"))+'</title>';
-			balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : ""))+'" stroke-width="'+(size/2)+'" fill="transparent" />';
-			balise += '<polygon points="20,28 21,23 27,23 14,14" style="fill:lime;stroke:purple;stroke-width:1" />';
+			balise += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" preserveAspectRatio="XMidYMid meet" name="up'+name+'">';
+			if (tooltip)
+				balise += '<title>'+tooltip+'</title>';
+			balise += '<circle cx="112" cy="112" r="56" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : "red"))+'" stroke-width="56" fill="transparent" />';
+			if (drawArrow)
+				balise += '<polygon points="160,224 168,184 216,184 112,112" style="fill:lime;stroke:purple;stroke-width:8" />';
 			balise += '</svg>';
 		}
 		return balise;
 	}
 
-	static createActionCircleGauche(size, groupe){
-		var balise = '';
-		if (groupe != "div.actions")
-		{
-			balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'">';
-			balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : ""))+'" stroke-width="'+(size/2)+'" fill="transparent" />';
-			balise += '<polygon points="0,20 5,21 5,27 14,14" style="fill:lime;stroke:purple;stroke-width:1" />';
-			balise += '</svg>';
-		}
+	// static createActionCircle28(size, groupe, name){
+	// 	var balise = '';
+	// 	if (groupe != "div.actions")
+	// 	{
+	// 		balise += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" preserveAspectRatio="X200Y200" name="up'+name+'">';
+	// 		balise += '<title>Mémoriser dans les '+(groupe == "div.lastpage" ? "pages courantes" : (groupe == "div.savedpages" ? "pages de référence" : "??"))+'</title>';
+	// 		balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : ""))+'" stroke-width="'+(size/2)+'" fill="transparent" />';
+	// 		balise += '<polygon points="20,28 21,23 27,23 14,14" style="fill:lime;stroke:purple;stroke-width:1" />';
+	// 		balise += '</svg>';
+	// 	}
+	// 	return balise;
+	// }
+
+	// static createActionCircleGauche(size, groupe){
+	// 	var balise = '';
+	// 	if (groupe != "div.actions")
+	// 	{
+	// 		balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'">';
+	// 		balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : ""))+'" stroke-width="'+(size/2)+'" fill="transparent" />';
+	// 		balise += '<polygon points="0,20 5,21 5,27 14,14" style="fill:lime;stroke:purple;stroke-width:1" />';
+	// 		balise += '</svg>';
+	// 	}
+	// 	return balise;
+	// }
+
+	static createActionRemove(name){
+		var balise = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" preserveAspectRatio="XMidYMid meet" name="del'+name+'">';
+		balise += '<title>Supprimer</title>';
+		balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
+
+		balise += '<line x1="72" y1="72" x2="48" y2="48" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
+		balise += '<line x1="152" y1="152" x2="176" y2="176" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
+		balise += '<line x1="72" y1="152" x2="48" y2="176" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
+		balise += '<line x1="152" y1="72" x2="176" y2="48" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
+
+		balise += '<line x1="112" y1="80" x2="112" y2="32" style="stroke:rgb(255,0,0);stroke-width:8" />';
+		balise += '<line x1="32" y1="112" x2="80" y2="112" style="stroke:rgb(255,0,0);stroke-width:8"  />';
+		balise += '<line x1="112" y1="144" x2="112" y2="192" style="stroke:rgb(255,0,0);stroke-width:8" />';
+		balise += '<line x1="144" y1="112" x2="192" y2="112" style="stroke:rgb(255,0,0);stroke-width:8" />';
+		balise += '<polygon points="160,224 168,184 216,184 112,112" style="fill:red;stroke:purple;stroke-width:8" />';
+		balise += '</svg>';
 		return balise;
 	}
 
-	static createActionRemove(size, groupe, name){
-		var balise = '';
-		if (groupe != "div.actions")
-		{
-			balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'" name="del'+name+'">';
-			balise += '<title>Supprimer</title>';
-			balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
+	// static createActionRemove28(size, groupe, name){
+	// 	var balise = '';
+	// 	if (groupe != "div.actions")
+	// 	{
+	// 		balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'" name="del'+name+'">';
+	// 		balise += '<title>Supprimer</title>';
+	// 		balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
 
-			balise += '<line x1="9" y1="9" x2="6" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-			balise += '<line x1="19" y1="19" x2="22" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-			balise += '<line x1="9" y1="19" x2="6" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-			balise += '<line x1="19" y1="9" x2="22" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		balise += '<line x1="9" y1="9" x2="6" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		balise += '<line x1="19" y1="19" x2="22" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		balise += '<line x1="9" y1="19" x2="6" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		balise += '<line x1="19" y1="9" x2="22" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
 
-			balise += '<line x1="14" y1="10" x2="14" y2="4" style="stroke:rgb(255,0,0);stroke-width:1" />';
-			balise += '<line x1="4" y1="14" x2="10" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
-			balise += '<line x1="14" y1="18" x2="14" y2="24" style="stroke:rgb(255,0,0);stroke-width:1" />';
-			balise += '<line x1="18" y1="14" x2="24" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
-			balise += '<polygon points="20,28 21,23 27,23 14,14" style="fill:red;stroke:purple;stroke-width:1" />';
-			balise += '</svg>';
-		}
-		return balise;
-	}
+	// 		balise += '<line x1="14" y1="10" x2="14" y2="4" style="stroke:rgb(255,0,0);stroke-width:1" />';
+	// 		balise += '<line x1="4" y1="14" x2="10" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
+	// 		balise += '<line x1="14" y1="18" x2="14" y2="24" style="stroke:rgb(255,0,0);stroke-width:1" />';
+	// 		balise += '<line x1="18" y1="14" x2="24" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
+	// 		balise += '<polygon points="20,28 21,23 27,23 14,14" style="fill:red;stroke:purple;stroke-width:1" />';
+	// 		balise += '</svg>';
+	// 	}
+	// 	return balise;
+	// }
 
-	static createActionRemoveGauche(size, groupe){
-		var balise = '';
-		if (groupe != "div.actions")
-		{
-			balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'">';
-			balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
-			//balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" fill="red" filter="url(#f1)" />';
+	// static createActionRemoveGauche(size, groupe){
+	// 	var balise = '';
+	// 	if (groupe != "div.actions")
+	// 	{
+	// 		balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'">';
+	// 		balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
+	// 		//balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" fill="red" filter="url(#f1)" />';
 
-			// balise += '<line x1="11" y1="11" x2="4" y2="4" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-			// balise += '<line x1="17" y1="17" x2="24" y2="24" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-			// balise += '<line x1="11" y1="17" x2="4" y2="24" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-			// balise += '<line x1="17" y1="11" x2="24" y2="4" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		// balise += '<line x1="11" y1="11" x2="4" y2="4" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		// balise += '<line x1="17" y1="17" x2="24" y2="24" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		// balise += '<line x1="11" y1="17" x2="4" y2="24" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		// balise += '<line x1="17" y1="11" x2="24" y2="4" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
 
-			// balise += '<line x1="14" y1="12" x2="14" y2="2" style="stroke:rgb(255,0,0);stroke-width:1" />';
-			// balise += '<line x1="2" y1="14" x2="12" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
-			// balise += '<line x1="14" y1="16" x2="14" y2="28" style="stroke:rgb(255,0,0);stroke-width:1" />';
-			// balise += '<line x1="16" y1="14" x2="28" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
+	// 		// balise += '<line x1="14" y1="12" x2="14" y2="2" style="stroke:rgb(255,0,0);stroke-width:1" />';
+	// 		// balise += '<line x1="2" y1="14" x2="12" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
+	// 		// balise += '<line x1="14" y1="16" x2="14" y2="28" style="stroke:rgb(255,0,0);stroke-width:1" />';
+	// 		// balise += '<line x1="16" y1="14" x2="28" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
 
-			balise += '<line x1="9" y1="9" x2="6" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-			balise += '<line x1="19" y1="19" x2="22" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-			balise += '<line x1="9" y1="19" x2="6" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-			balise += '<line x1="19" y1="9" x2="22" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		balise += '<line x1="9" y1="9" x2="6" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		balise += '<line x1="19" y1="19" x2="22" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		balise += '<line x1="9" y1="19" x2="6" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
+	// 		balise += '<line x1="19" y1="9" x2="22" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
 
-			balise += '<line x1="14" y1="10" x2="14" y2="4" style="stroke:rgb(255,0,0);stroke-width:1" />';
-			balise += '<line x1="4" y1="14" x2="10" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
-			balise += '<line x1="14" y1="18" x2="14" y2="24" style="stroke:rgb(255,0,0);stroke-width:1" />';
-			balise += '<line x1="18" y1="14" x2="24" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
-			balise += '<polygon points="0,20 5,21 5,27 14,14" style="fill:red;stroke:purple;stroke-width:1" />';
-			balise += '</svg>';
-		}
-		return balise;
-	}
+	// 		balise += '<line x1="14" y1="10" x2="14" y2="4" style="stroke:rgb(255,0,0);stroke-width:1" />';
+	// 		balise += '<line x1="4" y1="14" x2="10" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
+	// 		balise += '<line x1="14" y1="18" x2="14" y2="24" style="stroke:rgb(255,0,0);stroke-width:1" />';
+	// 		balise += '<line x1="18" y1="14" x2="24" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
+	// 		balise += '<polygon points="0,20 5,21 5,27 14,14" style="fill:red;stroke:purple;stroke-width:1" />';
+	// 		balise += '</svg>';
+	// 	}
+	// 	return balise;
+	// }
 }

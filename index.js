@@ -61,10 +61,11 @@ function appendActions(addclass, actionList) {
 			var textLigne = '<div class="ligne level' + item.level + '"><a name="' + item.name + '" class="lien" '+(item.tooltip ? 'title="'+item.tooltip+'"' : '' )+'>' + item.label + '</a>';
 			if (item.level == 1)
 			{
-				textLigne += SVGMaker.createActionCircle(14, addclass, item.name);
-				if (addclass != "div.lastpage")
+				var tooltip = 'Mémoriser dans les '+(addclass == "div.lastpage" ? "pages courantes" : (addclass == "div.savedpages" ? "pages de référence" : "??"));
+				textLigne += SVGBuilder.createActionCircle(addclass, item.name, tooltip, true);
+				if (addclass == "div.savedpages")
 				{
-					textLigne += SVGMaker.createActionRemove(14, addclass, item.name);
+					textLigne += SVGBuilder.createActionRemove(item.name);
 				}
 			}
 			textLigne += '</div>';
@@ -136,6 +137,27 @@ function initLists() {
 	listSavedPages(forceReload);
 	console.log('Init done ');
 }
+function initGraphics() {
+	var addClass = 'div.lastpage';
+	var textLigne = SVGBuilder.createActionCircle(addClass, 'title1', 'Tune up your Genius', true);
+	var divLine = $(".title span");		
+	divLine.prepend(textLigne);
+
+	addClass = 'div.savedpages';
+	textLigne = SVGBuilder.createActionCircle(addClass, 'subtitle1');
+	divLine = $(".s1.subtitle");		
+	divLine.prepend(textLigne);
+
+	addClass = 'div.lastpage';
+	textLigne = SVGBuilder.createActionCircle(addClass, 'subtitle2');
+	divLine = $(".s2.subtitle");
+	divLine.prepend(textLigne);
+
+	addClass = 'red';
+	textLigne = SVGBuilder.createActionCircle(addClass, 'subtitle3');
+	divLine = $(".s3.subtitle");
+	divLine.prepend(textLigne);
+}
 
 function loadLastPage() {
 	chrome.storage.sync.get(['geniusLastPage'], function (items) {
@@ -145,6 +167,7 @@ function loadLastPage() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+	initGraphics();
 	initLists();
 	loadLastPage();
 }, false);
