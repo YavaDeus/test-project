@@ -38,6 +38,7 @@ class GlobalLink extends Link {
 		super(id, label, level, url);
 		this.type = 'global';
 		this.name = this.getName();
+		this.child = new Array(0);
 	}
 }
 
@@ -194,6 +195,7 @@ class SVGMaker {
 		if (groupe != "div.actions")
 		{
 			balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'" name="up'+name+'">';
+			balise += '<title>Mémoriser dans les '+(groupe == "div.lastpage" ? "pages courantes" : (groupe == "div.savedpages" ? "pages de référence" : "??"))+'</title>';
 			balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : ""))+'" stroke-width="'+(size/2)+'" fill="transparent" />';
 			balise += '<polygon points="20,28 21,23 27,23 14,14" style="fill:lime;stroke:purple;stroke-width:1" />';
 			balise += '</svg>';
@@ -218,6 +220,7 @@ class SVGMaker {
 		if (groupe != "div.actions")
 		{
 			balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'" name="del'+name+'">';
+			balise += '<title>Supprimer</title>';
 			balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
 
 			balise += '<line x1="9" y1="9" x2="6" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';

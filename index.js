@@ -61,9 +61,11 @@ function appendActions(addclass, actionList) {
 			var textLigne = '<div class="ligne level' + item.level + '"><a name="' + item.name + '" class="lien" '+(item.tooltip ? 'title="'+item.tooltip+'"' : '' )+'>' + item.label + '</a>';
 			if (item.level == 1)
 			{
-				textLigne += SVGMaker.createActionCircle(14, addclass);
+				textLigne += SVGMaker.createActionCircle(14, addclass, item.name);
 				if (addclass != "div.lastpage")
-					textLigne += SVGMaker.createActionRemove(14, addclass);
+				{
+					textLigne += SVGMaker.createActionRemove(14, addclass, item.name);
+				}
 			}
 			textLigne += '</div>';
 			divActions.append(textLigne);
@@ -71,6 +73,20 @@ function appendActions(addclass, actionList) {
 			var lien = $("a.lien[name='" + item.name + "']");
 			lien.on("click", function () {
 				openTab(item.url);
+			});
+			let upSVG = $("svg[name='up" + item.name + "']");
+			upSVG.on("click", function () {
+				openTab(item.url);
+			});
+			let delSVG = $("svg[name='del" + item.name + "']");
+			delSVG.on("click", function () {
+				actionList.deleteLevel(item.name);
+				$("div.ligne.level1 a.lien[name='" + item.name + "']").parent().remove();
+				chrome.storage.sync.set({
+					'geniusSavedPages': actionList
+				}, function () {
+					console.log('Dekete ok');
+				});
 			});
 		}
 	}
