@@ -1,13 +1,34 @@
-{
-	"links" : 
-	[
-		"Genius Editor Helper"
-	],
-	"tags" :
-	[
-		"italique" :  "*mot*", 
-		"gras" :  "**mot**"
-
-	
-	]	
-}
+'defaultactions': [{
+						'id': '0',
+						'url': 'https://genius.com/tags/france',
+						'name': 'Ouvrir Genius France'
+					},{
+						'id': '1',
+						'url': 'https://genius.com/Genius-france-fonctionnement-du-site-annotated',
+						'name': 'Fonctionnement du site'
+					}, {
+						'id': '2',
+						'url': 'https://genius.com/Genius-france-comment-ajouter-des-textes-sur-genius-annotated',
+						'name': 'Comment ajouter des textes'
+					}, {
+						'id': '',
+						'url': 'https://genius.com/Genius-france-comment-annoter-correctement-annotated',
+						'name': 'Comment annoter correctement'
+					}, {
+						'id': '4',
+						'url': 'https://genius.com/Genius-france-guide-basique-html-annotated',
+						'name': 'Guide basique HTML'
+					}, {
+						'id': '5',
+						'url': 'https://genius.com/Genius-france-le-role-de-lediteur-annotated',
+						'name': 'Le rôle de l\'éditeur'
+					}, {
+						'id': '6',
+						'url': 'https://genius.com/Genius-france-effectif-genius-france-annotated',
+						'name': 'Effectifs genius france'
+					}, {
+						'id': '7',
+						'url': 'https://genius.com/Genius-france-role-des-genius-annotated',
+						'name': 'Rôles des Genius'
+					}
+				]

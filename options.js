@@ -1,29 +1,33 @@
 "use strict";
 
-$("#nameButton").on("click", addTag);
+function appendActions(actionList) {
+	if (actionList) {
+		var divActions = $("div.actions");
+		for (let item of actionList.actions) {
+			console.log(item);
+			var textLigne = '<div class="ligne level'+item.level+'"><input type="text" value="'+item.label+'" /><input type="text" value="'+item.url+'" /></div>';
 
-function addTag() {
-	chrome.tabs.create({url:"options.html"});
-
-	var name = $("#nameButton").attr("name");
-	console.log("name");
-	console.log(name);
-	//localStorage[' name '] = [name];
-	//localStorage[' links '] = ["bob"];
-
-	// Save it using the Chrome extension storage API.
-	chrome.storage.sync.get(['tags'], function (items) {
-		var tags = items.tags;
-		tags.push({
-			'name': name,
-			'value': 'op--'
-		});
-
-		chrome.storage.sync.set({
-			'tags': tags
-		}, function () {
-			console.log('Settings saved ');
-		});
-	});
-
+			divActions.prepend(textLigne);
+		}
+	}
 }
+
+function listActions() {
+	console.log('List actions');
+
+	chrome.storage.sync.get(['geniusActions'], function (items) {
+		appendActions(new ActionList(items.geniusActions, 'GlobalLink'));
+	});
+}
+
+function initOptions() {
+	//listTags(preLoad, forceReload);
+	listActions();
+	console.log(' Init done ');
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+	initOptions();
+}, false);
+
+

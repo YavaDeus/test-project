@@ -1,6 +1,6 @@
 {
 	"name" :"Genius Editor Helper",
-	"version" :"1.0",
+	"version" :"1.02",
 	"manifest_version": 2,
 	"description" :"Outil de facilitation",
 	//"default_locale": "fr",
@@ -8,16 +8,16 @@
 	"options_page":"options.html",
 	"browser_action" :
 	{
-		"default_icon" : "icone1.jpg",
+		"default_icon" : "icone3.png",
 		"default_title" : "Tune up your Genius",
 		"default_popup" :"index.html"
 	},
 	"content_scripts": 
 	[
 		{
-		  "matches": ["https://genius.com/genius-france"],
-		  //"css": ["mystyles.css"],
-		  "js": ["jquery-3.3.1.min.js", "less.min.js", "addButton.js"]
+		  "matches": ["https://genius.com/*"],
+		  "css": ["page.css"],
+		  "js": ["jquery-3.3.1.min.js", "less.min.js", "defineData.js", "addButtons.js"]
 		}
 	],
 		"permissions": [
