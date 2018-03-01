@@ -1,81 +1,140 @@
 "use strict";
 
 class Action {
-	constructor(id, label, level) {
+	constructor(id, label) {
 		this.id = id;
 		this.label = label;
-		this.level = level;
-		this.type = 'action';
-		this.name = this.getName(); ;
 	}
 
-	getName() {
+	get type() {
+		return this.constructor.name;
+	}
+
+	get name() {
 		return this.type + this.id;
 	}
 
+	toFlatObject()
+	{
+		var flatObject = {};
+		flatObject.id = this.id;
+		flatObject.label = this.label;
+		flatObject.type = this.type;
+		flatObject.name = this.name;
+
+		return flatObject;
+	}
 }
 
 class Tag extends Action {
-	constructor(id, label, level, value) {
-		super(id, label, level);
-		this.type = 'tag';
+	constructor(id, label, value) {
+		super(id, label);
 		this.value = value;
-		this.name = this.getName();
+	}
+
+	toFlatObject()
+	{
+		var flatObject = super.toFlatObject();
+		flatObject.value = this.value;
+
+		return flatObject;
 	}
 }
 
 class Link extends Action {
-	constructor(id, label, level, url) {
-		super(id, label, level);
-		this.type = 'link';
+	constructor(id, label, url, tooltip) {
+		super(id, label);
 		this.url = url;
-		this.name = this.getName();
+		if (tooltip)
+			this.tooltip = tooltip;
+	}
+
+	toFlatObject()
+	{
+		var flatObject = super.toFlatObject();
+		flatObject.url = this.url;
+		flatObject.tooltip = this.tooltip;
+
+		return flatObject;
 	}
 }
 
 class GlobalLink extends Link {
-	constructor(id, label, level, url) {
-		super(id, label, level, url);
-		this.type = 'global';
-		this.name = this.getName();
-		this.child = new Array(0);
+	constructor(id, label, url, tooltip, childs) {
+		super(id, label, url, tooltip);
+		if (childs)
+		{
+			this.childs = new ActionList({actions:childs.actions.map(x => new SubLink(x.id, x.label, x.url, x.tooltip)), type:"SubLink"});
+		}
+		else
+		{
+			this.childs = new ActionList();
+		}
+	}
+
+	get level() {
+		return 1;
+	}
+
+	toFlatObject()
+	{
+		var flatObject = super.toFlatObject();
+		flatObject.childs = this.childs.toFlatObject();
+		flatObject.level = this.level;
+
+		return flatObject;
 	}
 }
 
-class NavigationLink extends Link {
-	constructor(id, label, level, url, tooltip) {
-		super(id, label, level, url);
-		this.type = 'navigation';
-		this.tooltip = tooltip;
-		this.name = this.getName();
+class SubLink extends Link {
+	constructor(id, label, url, tooltip) {
+		super(id, label, url, tooltip);
+	}
+
+	get level() {
+		return 2;
+	}
+
+	toFlatObject()
+	{
+		var flatObject = super.toFlatObject();
+		flatObject.level = this.level;
+
+		return flatObject;
 	}
 }
 
 class ActionList {
-	constructor(flatObject, type) {
+	constructor(flatObject) {
 		this.actions = new Array(0);
+
 		if (flatObject !== undefined) {
-			switch (type) {
+			
+			switch (flatObject.type) {
 			case 'Tag':
-				this.actions = flatObject.actions.map(x => new Tag(x.id, x.label, x.level, x.value));
+				this.actions = flatObject.actions.map(x => new Tag(x.id, x.label, x.value));
 				break;
 			case 'Link':
-				this.actions = flatObject.actions.map(x => new Link(x.id, x.label, x.level, x.url));
+				this.actions = flatObject.actions.map(x => new Link(x.id, x.label, x.url, x.toolptip));
 				break;
 			case 'GlobalLink':
-				this.actions = flatObject.actions.map(x => new GlobalLink(x.id, x.label, x.level, x.url));
+				this.actions = flatObject.actions.map(x => new GlobalLink(x.id, x.label, x.url, x.toolptip, x.childs));
 				break;
-			case 'NavigationLink':
-				this.actions = flatObject.actions.map(x => new NavigationLink(x.id, x.label, x.level, x.url, x.tooltip));
+			case 'SubLink':
+				this.actions = flatObject.actions.map(x => new SubLink(x.id, x.label, x.url, x.tooltip));
 				break;
 			default:
-				this.actions = flatObject.actions.map(x => new Action(x.id, x.label, x.level));
+				this.actions = flatObject.actions.map(x => new Action(x.id, x.label));
 			}
 		}
 	}
 
-	length() {
+	get length() {
 		return this.actions.length;
+	}
+
+	get type() {
+		return this.actions.length == 0 ? 'Action' : this.actions[0].type;
 	}
 
 	nextId() {
@@ -87,18 +146,22 @@ class ActionList {
 		}
 	}
 
-	add(action) {
+	add(action, limit) {
+		if (this.length >= limit)
+		{
+			this.actions.shift();
+		}
+
 		if (action.id == 0) {
 			action.id = this.nextId();
-			action.name = action.getName();
 		}
 		this.actions.push(action);
 	}
 
-	addDedupe(action)
+	addDedupeLink(action)
 	{
 		for (let item of this.actions) {
-			if (item.url == action.url && item.level == action.level && item.tooltip != action.tooltip)
+			if (item.url === action.url && item.level === action.level && item.tooltip !== action.tooltip)
 			{
 				item.tooltip = item.tooltip + ', ' + action.tooltip;
 				return;
@@ -107,7 +170,30 @@ class ActionList {
 		this.add(action);
 	}
 
-	deleteLevel(name)
+	delete(name)
+	{
+		for (let i=0; i++; i < this.actions.length) {
+			let item = this.actions[i];
+			if (item.name === name)
+			{
+				//delete item;
+				this.actions.splice(i,1);
+				break;
+			}
+		}
+	}
+
+	toFlatObject()
+	{
+		var flatObject = {};
+		flatObject.actions = this.actions.map(x => x.toFlatObject());
+		flatObject.type = this.type;
+		flatObject.length = this.length;
+
+		return flatObject;
+	}
+
+	/*deleteLevel(name)
 	{
 		let newListActions = new Array(0);
 		let level = 0;
@@ -124,15 +210,15 @@ class ActionList {
 			}
 		}
 		this.actions = newListActions;
-	}
+	}*/
 
-	countLevel(level)
+	/*countLevel(level)
 	{
 		const reducerLevel = (accumulator, currentValue) => accumulator + (currentValue.level == level ? 1 : 0);
 		return this.actions.reduce(reducerLevel, 0);
-	}
+	}*/
 
-	merge(list, nbMaxLevel1)
+	/*merge(list, nbMaxLevel1)
 	{
 		//Test d'élément déjà existant
 		let fisrtLevelAction = list.actions[0];
@@ -166,7 +252,7 @@ class ActionList {
 			}
 		}
 
-	}
+	}*/
 
 }
 

@@ -1,6 +1,6 @@
 "use strict";
 
-function appendActions(actionList) {
+function appendLinks(actionList) {
 	if (actionList) {
 		var divActions = $("div.actions");
 		for (let item of actionList.actions) {
@@ -12,17 +12,17 @@ function appendActions(actionList) {
 	}
 }
 
-function listActions() {
+function listReferences() {
 	console.log('List actions');
 
-	chrome.storage.sync.get(['geniusActions'], function (items) {
-		appendActions(new ActionList(items.geniusActions, 'GlobalLink'));
+	chrome.storage.sync.get(['geniusReferences'], function (items) {
+		appendLinks(new ActionList(items.geniusReferences));
 	});
 }
 
 function initOptions() {
 	//listTags(preLoad, forceReload);
-	listActions();
+	listReferences();
 	console.log(' Init done ');
 }
 

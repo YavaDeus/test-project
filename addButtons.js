@@ -1,6 +1,6 @@
 "use strict";
 
-function createList() {
+function createLastPage() {
 	var page = $("h1.header_with_cover_art-primary_info-title")[0];
 	var artist = $("a.header_with_cover_art-primary_info-primary_artist")[0];
 	var album = $("a[ng-bind='album.name']")[0];
@@ -9,38 +9,38 @@ function createList() {
 	var writers = $("expandable-list[label='Writers'] a:not([ng-click=\"ctrl.show_more()\"])");
 	
 
-	var lastPage = new ActionList();
+	var lastPage;
 	if (page)
-		lastPage.add(new NavigationLink(0, page.innerText, 1, window.location.href, 'Titre'));
+		lastPage = new GlobalLink(0, page.innerText, window.location.href, 'Titre');
 	else
 	{
 		page = $("h1.profile_identity-name_iq_and_role_icon")[0];
 		if (page)
-			lastPage.add(new NavigationLink(0, page.firstChild.data, 1, window.location.href, 'Artiste'));
+			lastPage = new GlobalLink(0, page.firstChild.data, window.location.href, 'Artiste');
 	}
 	if (artist)
-		lastPage.addDedupe(new NavigationLink(0, artist.innerText, 2, artist.href, 'Artiste'));
+		lastPage.childs.addDedupeLink(new SubLink(0, artist.innerText, artist.href, 'Artiste'));
 	if (album)
-		lastPage.addDedupe(new NavigationLink(0, album.innerText, 2, album.href, 'Album'));
+		lastPage.childs.addDedupeLink(new SubLink(0, album.innerText, album.href, 'Album'));
 	if (writtenby.length > 0)
 	{
 		for (let item of writtenby)
 		{
-			lastPage.addDedupe(new NavigationLink(0, item.innerText, 2, item.href, 'Written by'));
+			lastPage.childs.addDedupeLink(new SubLink(0, item.innerText, item.href, 'Written by'));
 		}
 	}
 	if (writers.length > 0)
 	{
 		for (let item of writers)
 		{
-			lastPage.addDedupe(new NavigationLink(0, item.innerText, 2, item.href, 'Writers'));
+			lastPage.childs.addDedupeLink(new SubLink(0, item.innerText, item.href, 'Writers'));
 		}
 	}
 	if (featuring.length > 0)
 	{
 		for (let item of featuring)
 		{
-			lastPage.addDedupe(new NavigationLink(0, item.innerText, 2, item.href, 'Featuring'));
+			lastPage.childs.addDedupeLink(new SubLink(0, item.innerText, item.href, 'Featuring'));
 		}
 	}
 
@@ -49,8 +49,8 @@ function createList() {
 
 function proceed()
 {
-	var theList = createList();
-	if (theList.length() > 0)
+	var theLastPage = createLastPage();
+	if (theLastPage)
 	{
 		var buttonContainer = $("h1.header_with_cover_art-primary_info-title").parent();
 
@@ -65,14 +65,16 @@ function proceed()
 
 		var saveButton = $("button#savePage");
 		saveButton.on("click", function () {
-			theList = createList();
-			savePage(theList);
+			theLastPage = createLastPage();
+			savePage(theLastPage);
 		});
 	}
 
 	console.log('Save last page');
+	var lastPages = new ActionList();
+	lastPages.add(theLastPage);
 	chrome.storage.sync.set({
-		'geniusLastPage': theList
+		'geniusLastPage': lastPages.toFlatObject()
 	});
 }
 
@@ -80,10 +82,10 @@ function proceed()
 function savePage(currentPage)
 {
 	chrome.storage.sync.get(['geniusSavedPages'], function (items) {
-		var actionList = new ActionList(items.geniusSavedPages, 'NavigationLink');
-		actionList.merge(currentPage, 3);
+		var savedPages = new ActionList(items.geniusSavedPages);
+		savedPages.add(currentPage, 3);
 		chrome.storage.sync.set({
-				'geniusSavedPages': actionList
+				'geniusSavedPages': savedPages.toFlatObject()
 			}, function () {
 				console.log('Add page ok');
 			});
