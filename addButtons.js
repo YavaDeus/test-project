@@ -72,24 +72,27 @@ function proceed()
 
 	console.log('Save last page');
 	var lastPages = new ActionList();
+	lastPages.name = 'geniusLastPage';
 	lastPages.add(theLastPage);
-	chrome.storage.sync.set({
-		'geniusLastPage': lastPages.toFlatObject()
-	});
+	StorageManager.saveActionList('geniusLastPage', lastPages);
 }
 
 
 function savePage(currentPage)
 {
-	chrome.storage.sync.get(['geniusSavedPages'], function (items) {
-		var savedPages = new ActionList(items.geniusSavedPages);
-		savedPages.add(currentPage, 3);
-		chrome.storage.sync.set({
-				'geniusSavedPages': savedPages.toFlatObject()
-			}, function () {
-				console.log('Add page ok');
-			});
+	StorageManager.readActionList('geniusSavedPages', function(saveList) {
+		saveList.add(currentPage, 3);
+		StorageManager.saveActionList('geniusSavedPages', saveList);
 	});
+	// chrome.storage.sync.get(['geniusSavedPages'], function (items) {
+	// 	var savedPages = new ActionList(items.geniusSavedPages);
+	// 	savedPages.add(currentPage, 3);
+	// 	chrome.storage.sync.set({
+	// 			'geniusSavedPages': savedPages.toFlatObject()
+	// 		}, function () {
+	// 			console.log('Add page ok');
+	// 		});
+	// });
 }
 
 window.setTimeout(function() {

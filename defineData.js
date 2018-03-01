@@ -4,6 +4,7 @@ class Action {
 	constructor(id, label) {
 		this.id = id;
 		this.label = label;
+		this.listName = '';
 	}
 
 	get type() {
@@ -11,7 +12,7 @@ class Action {
 	}
 
 	get name() {
-		return this.type + this.id;
+		return this.listName + this.type + this.id;
 	}
 
 	toFlatObject()
@@ -64,11 +65,13 @@ class GlobalLink extends Link {
 		super(id, label, url, tooltip);
 		if (childs)
 		{
-			this.childs = new ActionList({actions:childs.actions.map(x => new SubLink(x.id, x.label, x.url, x.tooltip)), type:"SubLink"});
+			childs.name = this.listName;
+			this.childs = new ActionList({actions:childs.actions.map(x => new SubLink(x.id, x.label, x.url, x.tooltip)), name: label, type:"SubLink"});
 		}
 		else
 		{
 			this.childs = new ActionList();
+			this.childs.name = label;
 		}
 	}
 
@@ -107,9 +110,10 @@ class SubLink extends Link {
 class ActionList {
 	constructor(flatObject) {
 		this.actions = new Array(0);
+		this.name;
 
 		if (flatObject !== undefined) {
-			
+			this.name = flatObject.name;
 			switch (flatObject.type) {
 			case 'Tag':
 				this.actions = flatObject.actions.map(x => new Tag(x.id, x.label, x.value));
@@ -119,12 +123,17 @@ class ActionList {
 				break;
 			case 'GlobalLink':
 				this.actions = flatObject.actions.map(x => new GlobalLink(x.id, x.label, x.url, x.toolptip, x.childs));
+
 				break;
 			case 'SubLink':
 				this.actions = flatObject.actions.map(x => new SubLink(x.id, x.label, x.url, x.tooltip));
 				break;
 			default:
 				this.actions = flatObject.actions.map(x => new Action(x.id, x.label));
+			}
+			for (let item of this.actions)
+			{
+				item.listName = this.name;
 			}
 		}
 	}
@@ -147,15 +156,28 @@ class ActionList {
 	}
 
 	add(action, limit) {
+		//Gestion des doublons
+		var name;
+		for (let item of this.actions) {
+			if (item.url === action.url && item.level === action.level)
+			{
+				name = item.name;
+				break;
+			}
+		}
+		if (name)
+			this.deleteByName(name);
+			
 		if (this.length >= limit)
 		{
 			this.actions.shift();
 		}
 
-		if (action.id == 0) {
-			action.id = this.nextId();
-		}
+		action.id = this.nextId();
+		action.listName = this.name;
+
 		this.actions.push(action);
+		return action;
 	}
 
 	addDedupeLink(action)
@@ -170,13 +192,12 @@ class ActionList {
 		this.add(action);
 	}
 
-	delete(name)
+	deleteByName(name)
 	{
-		for (let i=0; i++; i < this.actions.length) {
+		for (let i=0; i < this.actions.length; i++) {
 			let item = this.actions[i];
 			if (item.name === name)
 			{
-				//delete item;
 				this.actions.splice(i,1);
 				break;
 			}
@@ -187,72 +208,11 @@ class ActionList {
 	{
 		var flatObject = {};
 		flatObject.actions = this.actions.map(x => x.toFlatObject());
+		flatObject.name = this.name;
 		flatObject.type = this.type;
 		flatObject.length = this.length;
-
 		return flatObject;
 	}
-
-	/*deleteLevel(name)
-	{
-		let newListActions = new Array(0);
-		let level = 0;
-		let startDelete = false;
-		for (let item of this.actions) {
-			if (item.name == name)
-			{
-				level = item.level;
-				startDelete = true;
-			}
-			else if (!startDelete || item.level <= level) {
-				newListActions.push(item);
-				startDelete = false;
-			}
-		}
-		this.actions = newListActions;
-	}*/
-
-	/*countLevel(level)
-	{
-		const reducerLevel = (accumulator, currentValue) => accumulator + (currentValue.level == level ? 1 : 0);
-		return this.actions.reduce(reducerLevel, 0);
-	}*/
-
-	/*merge(list, nbMaxLevel1)
-	{
-		//Test d'élément déjà existant
-		let fisrtLevelAction = list.actions[0];
-		if (fisrtLevelAction.url)
-		{
-			for (let item of this.actions) {
-				if (item.url == fisrtLevelAction.url && item.level == fisrtLevelAction.level)
-					return;
-			}
-		}
-
-		//Concatenation
-		this.actions = this.actions.concat(list.actions);
-
-		//Recalcul des indexes
-		let id = 0;
-		for (let item of this.actions) {
-			item.id = id;
-			item.name = item.getName();
-			id ++;
-		}
-
-		//Gestion de la taille limite
-		let nbLevel1 = this.countLevel(1);
-		if (nbMaxLevel1 && nbMaxLevel1 < nbLevel1)
-		{
-			let difference = nbLevel1 - nbMaxLevel1;
-			for (let i = 0; i < difference; i++)
-			{
-				this.deleteLevel(this.actions[0].name);
-			}
-		}
-
-	}*/
 
 }
 
@@ -261,14 +221,30 @@ class StorageManager {
 
 	}
 
-	static save(storageName, element, callback)
+	static saveActionList(storageName, element, callback)
 	{
-
+		var storeObject = {};
+		storeObject[storageName] = element.toFlatObject();
+		chrome.storage.sync.set(storeObject, function () {
+			if (callback)
+				callback();
+		});
 	}
 
-	static read(storageName, element, callback)
+	static readActionList(storageName, callback)
 	{
-
+		chrome.storage.sync.get([storageName], function (items) {
+			if (callback)
+			{
+				if (!items || !items[storageName])
+				{
+					callback();
+				}
+				else{
+					callback(new ActionList(items[storageName]));
+				}
+			}
+		});
 	}
 }
 
@@ -291,31 +267,6 @@ class SVGBuilder {
 		return balise;
 	}
 
-	// static createActionCircle28(size, groupe, name){
-	// 	var balise = '';
-	// 	if (groupe != "div.actions")
-	// 	{
-	// 		balise += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" preserveAspectRatio="X200Y200" name="up'+name+'">';
-	// 		balise += '<title>Mémoriser dans les '+(groupe == "div.lastpage" ? "pages courantes" : (groupe == "div.savedpages" ? "pages de référence" : "??"))+'</title>';
-	// 		balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : ""))+'" stroke-width="'+(size/2)+'" fill="transparent" />';
-	// 		balise += '<polygon points="20,28 21,23 27,23 14,14" style="fill:lime;stroke:purple;stroke-width:1" />';
-	// 		balise += '</svg>';
-	// 	}
-	// 	return balise;
-	// }
-
-	// static createActionCircleGauche(size, groupe){
-	// 	var balise = '';
-	// 	if (groupe != "div.actions")
-	// 	{
-	// 		balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'">';
-	// 		balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : ""))+'" stroke-width="'+(size/2)+'" fill="transparent" />';
-	// 		balise += '<polygon points="0,20 5,21 5,27 14,14" style="fill:lime;stroke:purple;stroke-width:1" />';
-	// 		balise += '</svg>';
-	// 	}
-	// 	return balise;
-	// }
-
 	static createActionRemove(name){
 		var balise = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" preserveAspectRatio="XMidYMid meet" name="del'+name+'">';
 		balise += '<title>Supprimer</title>';
@@ -334,60 +285,4 @@ class SVGBuilder {
 		balise += '</svg>';
 		return balise;
 	}
-
-	// static createActionRemove28(size, groupe, name){
-	// 	var balise = '';
-	// 	if (groupe != "div.actions")
-	// 	{
-	// 		balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'" name="del'+name+'">';
-	// 		balise += '<title>Supprimer</title>';
-	// 		balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
-
-	// 		balise += '<line x1="9" y1="9" x2="6" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-	// 		balise += '<line x1="19" y1="19" x2="22" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-	// 		balise += '<line x1="9" y1="19" x2="6" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-	// 		balise += '<line x1="19" y1="9" x2="22" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-
-	// 		balise += '<line x1="14" y1="10" x2="14" y2="4" style="stroke:rgb(255,0,0);stroke-width:1" />';
-	// 		balise += '<line x1="4" y1="14" x2="10" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
-	// 		balise += '<line x1="14" y1="18" x2="14" y2="24" style="stroke:rgb(255,0,0);stroke-width:1" />';
-	// 		balise += '<line x1="18" y1="14" x2="24" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
-	// 		balise += '<polygon points="20,28 21,23 27,23 14,14" style="fill:red;stroke:purple;stroke-width:1" />';
-	// 		balise += '</svg>';
-	// 	}
-	// 	return balise;
-	// }
-
-	// static createActionRemoveGauche(size, groupe){
-	// 	var balise = '';
-	// 	if (groupe != "div.actions")
-	// 	{
-	// 		balise += '<svg width="'+(size * 2)+'" height="'+(size * 2)+'">';
-	// 		balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
-	// 		//balise += '<circle cx="'+size+'" cy="'+size+'" r="'+(size/2)+'" fill="red" filter="url(#f1)" />';
-
-	// 		// balise += '<line x1="11" y1="11" x2="4" y2="4" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-	// 		// balise += '<line x1="17" y1="17" x2="24" y2="24" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-	// 		// balise += '<line x1="11" y1="17" x2="4" y2="24" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-	// 		// balise += '<line x1="17" y1="11" x2="24" y2="4" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-
-	// 		// balise += '<line x1="14" y1="12" x2="14" y2="2" style="stroke:rgb(255,0,0);stroke-width:1" />';
-	// 		// balise += '<line x1="2" y1="14" x2="12" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
-	// 		// balise += '<line x1="14" y1="16" x2="14" y2="28" style="stroke:rgb(255,0,0);stroke-width:1" />';
-	// 		// balise += '<line x1="16" y1="14" x2="28" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
-
-	// 		balise += '<line x1="9" y1="9" x2="6" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-	// 		balise += '<line x1="19" y1="19" x2="22" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-	// 		balise += '<line x1="9" y1="19" x2="6" y2="22" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-	// 		balise += '<line x1="19" y1="9" x2="22" y2="6" style="stroke:rgb(255,0,0);stroke-width:2" filter="url(#f1)" />';
-
-	// 		balise += '<line x1="14" y1="10" x2="14" y2="4" style="stroke:rgb(255,0,0);stroke-width:1" />';
-	// 		balise += '<line x1="4" y1="14" x2="10" y2="14" style="stroke:rgb(255,0,0);stroke-width:1"  />';
-	// 		balise += '<line x1="14" y1="18" x2="14" y2="24" style="stroke:rgb(255,0,0);stroke-width:1" />';
-	// 		balise += '<line x1="18" y1="14" x2="24" y2="14" style="stroke:rgb(255,0,0);stroke-width:1" />';
-	// 		balise += '<polygon points="0,20 5,21 5,27 14,14" style="fill:red;stroke:purple;stroke-width:1" />';
-	// 		balise += '</svg>';
-	// 	}
-	// 	return balise;
-	// }
 }
