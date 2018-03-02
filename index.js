@@ -94,6 +94,12 @@ function appendLinks(linkAreaIndex, actionList) {
 			//objectText.appendTo(objectLien);
 			objectLien.appendTo(objectLigne);
 
+			if (item.childs && item.childs.actions.length > 0 && linkAreaIndex < 2)
+			{
+				var objectTriangle = SVGBuilder.createTriangleObject();
+				objectTriangle.appendTo(objectLigne);
+			}
+
 			//let textLigne = '<div class="ligne level' + item.level + '"><a name="' + item.name + '" class="lien" '+(item.tooltip ? 'title="'+item.tooltip+'"' : '' )+'>' + item.label + '</a>';
 			if (item.level == 1 && linkAreaIndex > 0)
 			{
@@ -144,9 +150,12 @@ function appendLinks(linkAreaIndex, actionList) {
 			objectLigne.appendTo(divLinks);
 
 			//divLinks.append(textLigne);
-			if (item.childs)
+			console.log(item.childs);
+			let objectGroupe;
+			if (item.childs && item.childs.actions.length > 0)
 			{
-				let objectGroupe = $('<div>', {
+
+				objectGroupe = $('<div>', {
 					class:"ligne groupe"+(linkAreaIndex ==2 ? ' fixe' : ''),
 					name: "gr" + item.name
 				});
@@ -182,20 +191,7 @@ function appendLinks(linkAreaIndex, actionList) {
 					});
 				}
 
-				objectLigne.on("mouseover", function () {
-					console.log("mouseover");
-					if (objectGroupe !== activeGroupe)
-					{
-						!activeGroupe || activeGroupe.removeClass("visible");
-						if (linkAreaIndex != 2)
-						{
-							objectGroupe.addClass("visible");
-							activeGroupe = objectGroupe;
-						}
-						else
-							activeGroupe = undefined;
-					}
-				});
+				
 				
 
 				/*objectLigne.on("mouseout", function () {
@@ -203,6 +199,23 @@ function appendLinks(linkAreaIndex, actionList) {
 					objectGroupe.removeClass("visible");
 				});*/
 			}
+
+			objectLigne.on("mouseover", function () {
+				console.log("mouseover");
+				console.log(objectGroupe);
+				if (objectGroupe != activeGroupe)
+				{
+					console.log("titu");
+					!activeGroupe || activeGroupe.removeClass("visible");
+					if (linkAreaIndex != 2 && objectGroupe)
+					{
+						objectGroupe.addClass("visible");
+						activeGroupe = objectGroupe;
+					}
+					else
+						activeGroupe = undefined;
+				}
+			});
 			
 			//var lien = $(addclass+" a.lien[name='" + item.name + "']");
 			objectLien.on("click", function () {

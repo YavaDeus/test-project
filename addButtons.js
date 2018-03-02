@@ -4,6 +4,7 @@ function createLastPage() {
 	var page = $("h1.header_with_cover_art-primary_info-title")[0];
 	var artist = $("a.header_with_cover_art-primary_info-primary_artist")[0];
 	var album = $("a[ng-bind='album.name']")[0];
+	var producedby = $("expandable-list[label='Produced by'] a:not([ng-click=\"ctrl.show_more()\"])");
 	var writtenby = $("expandable-list[label='Written By'] a:not([ng-click=\"ctrl.show_more()\"])");
 	var featuring = $("expandable-list[label='Featuring'] a:not([ng-click=\"ctrl.show_more()\"])");
 	var writers = $("expandable-list[label='Writers'] a:not([ng-click=\"ctrl.show_more()\"])");
@@ -22,6 +23,13 @@ function createLastPage() {
 		lastPage.childs.addDedupeLink(new SubLink(0, artist.innerText, artist.href, 'Artiste'));
 	if (album)
 		lastPage.childs.addDedupeLink(new SubLink(0, album.innerText, album.href, 'Album'));
+	if (producedby.length > 0)
+	{
+		for (let item of producedby)
+		{
+			lastPage.childs.addDedupeLink(new SubLink(0, item.innerText, item.href, 'Produced by'));
+		}
+	}
 	if (writtenby.length > 0)
 	{
 		for (let item of writtenby)

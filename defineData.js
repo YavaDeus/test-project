@@ -259,6 +259,23 @@ class SVGBuilder {
 	static get xmlns() {
 		return "http://www.w3.org/2000/svg";
 	}
+
+	static createTriangleObject(color){
+		if (!color) 
+			color = "black";
+
+		var domSVG = document.createElementNS(this.xmlns, "svg");
+		domSVG.setAttributeNS (null, "viewBox", "0 0 200 200");
+		domSVG.setAttributeNS (null, "preserveAspectRatio", "XMidYMid meet");
+		domSVG.setAttributeNS (null, "class", "arrow");
+		
+		var domPolygon = document.createElementNS (this.xmlns, "polygon");
+		domPolygon.setAttributeNS (null, "points", "10,10 190,10 100,190");
+		domPolygon.setAttributeNS (null, "style", "fill:"+color+";stroke:"+color+";stroke-width:8");
+		domSVG.appendChild(domPolygon);
+		
+		return $(domSVG);
+	}
 	
 
 	static createActionCircleObject(color, name, tooltip, drawArrow){
