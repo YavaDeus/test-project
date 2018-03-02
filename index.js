@@ -6,6 +6,8 @@ var linkArea = new Array(
 	{class: "lastpage", color: "red"});
 //var colorList = new Array("green","orange","red");
 
+var activeGroupe = false;
+
 function openTab(url) {
 	console.log('open tab');
 	chrome.windows.getLastFocused(function (fenetre) {
@@ -140,12 +142,12 @@ function appendLinks(linkAreaIndex, actionList) {
 			}
 			//textLigne += '</div>';
 			objectLigne.appendTo(divLinks);
-			
+
 			//divLinks.append(textLigne);
 			if (item.childs)
 			{
 				let objectGroupe = $('<div>', {
-					class:"ligne groupe",
+					class:"ligne groupe"+(linkAreaIndex ==2 ? ' fixe' : ''),
 					name: "gr" + item.name
 				});
 				//var textgroupe = '<div class="groupe" name="gr' + item.name + '">';
@@ -179,6 +181,27 @@ function appendLinks(linkAreaIndex, actionList) {
 						openTab(subitem.url);
 					});
 				}
+
+				objectLigne.on("mouseover", function () {
+					console.log("mouseover");
+					if (objectGroupe !== activeGroupe)
+					{
+						!activeGroupe || activeGroupe.removeClass("visible");
+						if (linkAreaIndex != 2)
+						{
+							objectGroupe.addClass("visible");
+							activeGroupe = objectGroupe;
+						}
+						else
+							activeGroupe = undefined;
+					}
+				});
+				
+
+				/*objectLigne.on("mouseout", function () {
+					console.log("mouseout");
+					objectGroupe.removeClass("visible");
+				});*/
 			}
 			
 			//var lien = $(addclass+" a.lien[name='" + item.name + "']");

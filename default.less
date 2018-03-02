@@ -21,6 +21,32 @@ body
 		}
 	}
 
+	.groupe
+	{
+		&.fixe
+		{
+			padding: 0 !important;;
+		}
+		&:not(.fixe)
+		{
+		
+			background-color: #e0e0e0;
+			position: absolute;
+			left:100px;
+			padding : 5px;
+
+			> div.ligne.level2
+			{
+				padding-left : 5px;
+			}
+			&:not(.visible)
+			{
+				display:none;
+			}
+		}
+	}
+
+
 	.references, .lastpage, .savedpages
 	{
 		width: 100%;
@@ -32,8 +58,7 @@ body
 			font-style: normal;
 			font-size: 14px;
 			font-weight: bold;
-			padding-top: 5px;
-			padding-left: 5px;
+			padding: 5px;
 			color: black;
 			cursor: pointer;
 			
@@ -47,7 +72,7 @@ body
 				> a, svg {
 					margin-right: 20px;
 				}
-				
+
 				> svg
 				{
 					width: 28px;

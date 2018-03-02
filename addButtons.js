@@ -58,13 +58,20 @@ function proceed()
 		{
 			buttonContainer = $("div.profile_identity-text");
 		}
-		var textButton = '<button id="savePage">';
-		textButton += SVGBuilder.createActionCircle("div.lastpage", "openGEH", "Mémoriser la page dans Genius Editor Helper", true);
-		textButton += '</button>';
-		buttonContainer.append(textButton);
 
-		var saveButton = $("button#savePage");
-		saveButton.on("click", function () {
+		let objectButton = $('<button>', {
+			id: "savePage"
+		});
+
+		//var textButton = '<button id="savePage">';
+		let objectCircle = SVGBuilder.createActionCircleObject("orange", "openGEH", "Mémoriser la page dans Genius Editor Helper", true);
+		//textButton += '</button>';
+		objectCircle.appendTo(objectButton);
+		objectButton.appendTo(buttonContainer);
+		//buttonContainer.append(textButton);
+
+		//var saveButton = $("button#savePage");
+		objectButton.on("click", function () {
 			theLastPage = createLastPage();
 			savePage(theLastPage);
 		});
@@ -84,15 +91,6 @@ function savePage(currentPage)
 		saveList.add(currentPage, 3);
 		StorageManager.saveActionList('geniusSavedPages', saveList);
 	});
-	// chrome.storage.sync.get(['geniusSavedPages'], function (items) {
-	// 	var savedPages = new ActionList(items.geniusSavedPages);
-	// 	savedPages.add(currentPage, 3);
-	// 	chrome.storage.sync.set({
-	// 			'geniusSavedPages': savedPages.toFlatObject()
-	// 		}, function () {
-	// 			console.log('Add page ok');
-	// 		});
-	// });
 }
 
 window.setTimeout(function() {
