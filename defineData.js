@@ -167,7 +167,7 @@ class ActionList {
 		}
 		if (name)
 			this.deleteByName(name);
-			
+
 		if (this.length >= limit)
 		{
 			this.actions.shift();
@@ -250,8 +250,49 @@ class StorageManager {
 
 class SVGBuilder {
 	constructor() {
+		
 	}
 
+	static get xmlns() {
+		return "http://www.w3.org/2000/svg";
+	}
+	
+
+	static createActionCircleObject(groupe, name, tooltip, drawArrow){
+
+		var domSVG = document.createElementNS(this.xmlns, "svg");
+		domSVG.setAttributeNS (null, "viewBox", "0 0 224 224");
+		domSVG.setAttributeNS (null, "preserveAspectRatio", "XMidYMid meet");
+		domSVG.setAttributeNS (null, "name", "up"+name);
+			
+		if (groupe != "div.actions")
+		{
+			if (tooltip)
+			{
+				var domTooltip = document.createTextNode(tooltip);
+				var domTitle = document.createElementNS (this.xmlns, "title");
+				domTitle.appendChild(domTooltip);
+				domSVG.appendChild(domTitle);
+			}
+			var domCircle = document.createElementNS (this.xmlns, "circle");
+			domCircle.setAttributeNS (null, "cx", "112");
+			domCircle.setAttributeNS (null, "cy", "112");
+			domCircle.setAttributeNS (null, "r", "56");
+			domCircle.setAttributeNS (null, "stroke", (groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : "red")));
+			domCircle.setAttributeNS (null, "stroke-width", "56");
+			domCircle.setAttributeNS (null, "fill", "transparent");
+			domSVG.appendChild(domCircle);
+			if (drawArrow)
+			{
+				var domPolygon = document.createElementNS (this.xmlns, "polygon");
+				domPolygon.setAttributeNS (null, "points", "160,224 168,184 216,184 112,112");
+				domPolygon.setAttributeNS (null, "style", "fill:lime;stroke:purple;stroke-width:8");
+				domSVG.appendChild(domPolygon);
+			}
+
+		}
+		return $(domSVG);
+	}
 	static createActionCircle(groupe, name, tooltip, drawArrow){
 		var balise = '';
 		if (groupe != "div.actions")
@@ -265,6 +306,101 @@ class SVGBuilder {
 			balise += '</svg>';
 		}
 		return balise;
+	}
+
+	static createActionRemoveObject(name){
+
+		var domSVG = document.createElementNS(this.xmlns, "svg");
+		domSVG.setAttributeNS (null, "viewBox", "0 0 224 224");
+		domSVG.setAttributeNS (null, "preserveAspectRatio", "XMidYMid meet");
+		domSVG.setAttributeNS (null, "name", "del"+name);
+
+		var domTooltip = document.createTextNode("Supprimer");
+		var domTitle = document.createElementNS (this.xmlns, "title");
+		domTitle.appendChild(domTooltip);
+		domSVG.appendChild(domTitle);
+
+		var domBlur = document.createElementNS (this.xmlns, "feGaussianBlur");
+		domBlur.setAttributeNS (null, "in", "SourceGraphic");
+		domBlur.setAttributeNS (null, "stdDeviation", "0");
+		var domFilter = document.createElementNS (this.xmlns, "filter");
+		domFilter.setAttributeNS (null, "id", "f1");
+		domFilter.appendChild(domBlur);
+
+		var domLineA1 = document.createElementNS (this.xmlns, "line");
+		domLineA1.setAttributeNS (null, "x1", "72");
+		domLineA1.setAttributeNS (null, "y1", "72");
+		domLineA1.setAttributeNS (null, "x2", "48");
+		domLineA1.setAttributeNS (null, "y2", "48");
+		domLineA1.setAttributeNS (null, "style", "stroke:rgb(255,0,0);stroke-width:12");
+		domLineA1.setAttributeNS (null, "filter", "url(#f1)");
+		domSVG.appendChild(domLineA1);
+
+		var domLineA2 = document.createElementNS (this.xmlns, "line");
+		domLineA2.setAttributeNS (null, "x1", "152");
+		domLineA2.setAttributeNS (null, "y1", "152");
+		domLineA2.setAttributeNS (null, "x2", "176");
+		domLineA2.setAttributeNS (null, "y2", "176");
+		domLineA2.setAttributeNS (null, "style", "stroke:rgb(255,0,0);stroke-width:12");
+		domLineA2.setAttributeNS (null, "filter", "url(#f1)");
+		domSVG.appendChild(domLineA2);
+
+		var domLineA3 = document.createElementNS (this.xmlns, "line");
+		domLineA3.setAttributeNS (null, "x1", "72");
+		domLineA3.setAttributeNS (null, "y1", "152");
+		domLineA3.setAttributeNS (null, "x2", "48");
+		domLineA3.setAttributeNS (null, "y2", "176");
+		domLineA3.setAttributeNS (null, "style", "stroke:rgb(255,0,0);stroke-width:12");
+		domLineA3.setAttributeNS (null, "filter", "url(#f1)");
+		domSVG.appendChild(domLineA3);
+
+		var domLineA4 = document.createElementNS (this.xmlns, "line");
+		domLineA4.setAttributeNS (null, "x1", "152");
+		domLineA4.setAttributeNS (null, "y1", "72");
+		domLineA4.setAttributeNS (null, "x2", "176");
+		domLineA4.setAttributeNS (null, "y2", "48");
+		domLineA4.setAttributeNS (null, "style", "stroke:rgb(255,0,0);stroke-width:12");
+		domLineA4.setAttributeNS (null, "filter", "url(#f1)");
+		domSVG.appendChild(domLineA4);
+
+		var domLineB1 = document.createElementNS (this.xmlns, "line");
+		domLineB1.setAttributeNS (null, "x1", "112");
+		domLineB1.setAttributeNS (null, "y1", "80");
+		domLineB1.setAttributeNS (null, "x2", "112");
+		domLineB1.setAttributeNS (null, "y2", "32");
+		domLineB1.setAttributeNS (null, "style", "stroke:rgb(255,0,0);stroke-width:8");
+		domSVG.appendChild(domLineB1);
+
+		var domLineB2 = document.createElementNS (this.xmlns, "line");
+		domLineB2.setAttributeNS (null, "x1", "32");
+		domLineB2.setAttributeNS (null, "y1", "112");
+		domLineB2.setAttributeNS (null, "x2", "80");
+		domLineB2.setAttributeNS (null, "y2", "112");
+		domLineB2.setAttributeNS (null, "style", "stroke:rgb(255,0,0);stroke-width:8");
+		domSVG.appendChild(domLineB2);
+
+		var domLineB3 = document.createElementNS (this.xmlns, "line");
+		domLineB3.setAttributeNS (null, "x1", "112");
+		domLineB3.setAttributeNS (null, "y1", "144");
+		domLineB3.setAttributeNS (null, "x2", "112");
+		domLineB3.setAttributeNS (null, "y2", "192");
+		domLineB3.setAttributeNS (null, "style", "stroke:rgb(255,0,0);stroke-width:8");
+		domSVG.appendChild(domLineB3);
+
+		var domLineB4 = document.createElementNS (this.xmlns, "line");
+		domLineB4.setAttributeNS (null, "x1", "144");
+		domLineB4.setAttributeNS (null, "y1", "112");
+		domLineB4.setAttributeNS (null, "x2", "192");
+		domLineB4.setAttributeNS (null, "y2", "112");
+		domLineB4.setAttributeNS (null, "style", "stroke:rgb(255,0,0);stroke-width:8");
+		domSVG.appendChild(domLineB4);
+
+		var domPolygon = document.createElementNS (this.xmlns, "polygon");
+		domPolygon.setAttributeNS (null, "points", "160,224 168,184 216,184 112,112");
+		domPolygon.setAttributeNS (null, "style", "fill:red;stroke:purple;stroke-width:8");
+		domSVG.appendChild(domPolygon);
+
+		return $(domSVG);
 	}
 
 	static createActionRemove(name){

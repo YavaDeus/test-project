@@ -168,23 +168,26 @@ function initLists() {
 function initGraphics() {
 	var addClass = 'div.lastpage';
 	var textLigne = SVGBuilder.createActionCircle(addClass, 'title1', 'Tune up your Genius', true);
+	var objectLigne = SVGBuilder.createActionCircleObject(addClass, 'title1', 'Tune up your Genius', true);
+	console.log(objectLigne);
 	var divLine = $(".title span");		
-	divLine.prepend(textLigne);
+	//divLine.prepend(textLigne);
+	divLine.prepend(objectLigne);
 
 	addClass = 'div.savedpages';
-	textLigne = SVGBuilder.createActionCircle(addClass, 'subtitle1');
+	objectLigne = SVGBuilder.createActionCircleObject(addClass, 'subtitle1');
 	divLine = $(".s1.subtitle");		
-	divLine.prepend(textLigne);
+	divLine.prepend(objectLigne);
 
 	addClass = 'div.lastpage';
-	textLigne = SVGBuilder.createActionCircle(addClass, 'subtitle2');
+	objectLigne = SVGBuilder.createActionCircleObject(addClass, 'subtitle2');
 	divLine = $(".s2.subtitle");
-	divLine.prepend(textLigne);
+	divLine.prepend(objectLigne);
 
 	addClass = 'red';
-	textLigne = SVGBuilder.createActionCircle(addClass, 'subtitle3');
+	objectLigne = SVGBuilder.createActionCircleObject(addClass, 'subtitle3');
 	divLine = $(".s3.subtitle");
-	divLine.prepend(textLigne);
+	divLine.prepend(objectLigne);
 }
 
 function loadLastPage() {
