@@ -156,18 +156,21 @@ class ActionList {
 	}
 
 	add(action, limit) {
-		//Gestion des doublons
-		var name;
-		for (let item of this.actions) {
-			if (item.url === action.url && item.level === action.level)
-			{
-				name = item.name;
-				break;
+		//Gestion des doublons de liens
+		if (this.type.endsWith("Link"))
+		{
+			var name;
+			for (let item of this.actions) {
+				if (item.url === action.url && item.level === action.level)
+				{
+					name = item.name;
+					break;
+				}
 			}
-		}
-		if (name)
-			this.deleteByName(name);
+			if (name)
+				this.deleteByName(name);
 
+		}
 		if (this.length >= limit)
 		{
 			this.actions.shift();
@@ -258,55 +261,52 @@ class SVGBuilder {
 	}
 	
 
-	static createActionCircleObject(groupe, name, tooltip, drawArrow){
+	static createActionCircleObject(color, name, tooltip, drawArrow){
 
 		var domSVG = document.createElementNS(this.xmlns, "svg");
 		domSVG.setAttributeNS (null, "viewBox", "0 0 224 224");
 		domSVG.setAttributeNS (null, "preserveAspectRatio", "XMidYMid meet");
 		domSVG.setAttributeNS (null, "name", "up"+name);
-			
-		if (groupe != "div.actions")
+		
+		if (tooltip)
 		{
-			if (tooltip)
-			{
-				var domTooltip = document.createTextNode(tooltip);
-				var domTitle = document.createElementNS (this.xmlns, "title");
-				domTitle.appendChild(domTooltip);
-				domSVG.appendChild(domTitle);
-			}
-			var domCircle = document.createElementNS (this.xmlns, "circle");
-			domCircle.setAttributeNS (null, "cx", "112");
-			domCircle.setAttributeNS (null, "cy", "112");
-			domCircle.setAttributeNS (null, "r", "56");
-			domCircle.setAttributeNS (null, "stroke", (groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : "red")));
-			domCircle.setAttributeNS (null, "stroke-width", "56");
-			domCircle.setAttributeNS (null, "fill", "transparent");
-			domSVG.appendChild(domCircle);
-			if (drawArrow)
-			{
-				var domPolygon = document.createElementNS (this.xmlns, "polygon");
-				domPolygon.setAttributeNS (null, "points", "160,224 168,184 216,184 112,112");
-				domPolygon.setAttributeNS (null, "style", "fill:lime;stroke:purple;stroke-width:8");
-				domSVG.appendChild(domPolygon);
-			}
-
+			var domTooltip = document.createTextNode(tooltip);
+			var domTitle = document.createElementNS (this.xmlns, "title");
+			domTitle.appendChild(domTooltip);
+			domSVG.appendChild(domTitle);
 		}
+		var domCircle = document.createElementNS (this.xmlns, "circle");
+		domCircle.setAttributeNS (null, "cx", "112");
+		domCircle.setAttributeNS (null, "cy", "112");
+		domCircle.setAttributeNS (null, "r", "56");
+		domCircle.setAttributeNS (null, "stroke", color);
+		domCircle.setAttributeNS (null, "stroke-width", "56");
+		domCircle.setAttributeNS (null, "fill", "transparent");
+		domSVG.appendChild(domCircle);
+		if (drawArrow)
+		{
+			var domPolygon = document.createElementNS (this.xmlns, "polygon");
+			domPolygon.setAttributeNS (null, "points", "160,224 168,184 216,184 112,112");
+			domPolygon.setAttributeNS (null, "style", "fill:lime;stroke:purple;stroke-width:8");
+			domSVG.appendChild(domPolygon);
+		}
+
 		return $(domSVG);
 	}
-	static createActionCircle(groupe, name, tooltip, drawArrow){
-		var balise = '';
-		if (groupe != "div.actions")
-		{
-			balise += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" preserveAspectRatio="XMidYMid meet" name="up'+name+'">';
-			if (tooltip)
-				balise += '<title>'+tooltip+'</title>';
-			balise += '<circle cx="112" cy="112" r="56" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : "red"))+'" stroke-width="56" fill="transparent" />';
-			if (drawArrow)
-				balise += '<polygon points="160,224 168,184 216,184 112,112" style="fill:lime;stroke:purple;stroke-width:8" />';
-			balise += '</svg>';
-		}
-		return balise;
-	}
+	// static createActionCircle(groupe, name, tooltip, drawArrow){
+	// 	var balise = '';
+	// 	if (groupe != "div.references")
+	// 	{
+	// 		balise += '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" preserveAspectRatio="XMidYMid meet" name="up'+name+'">';
+	// 		if (tooltip)
+	// 			balise += '<title>'+tooltip+'</title>';
+	// 		balise += '<circle cx="112" cy="112" r="56" stroke="'+(groupe == "div.lastpage" ? "orange" : (groupe == "div.savedpages" ? "green" : "red"))+'" stroke-width="56" fill="transparent" />';
+	// 		if (drawArrow)
+	// 			balise += '<polygon points="160,224 168,184 216,184 112,112" style="fill:lime;stroke:purple;stroke-width:8" />';
+	// 		balise += '</svg>';
+	// 	}
+	// 	return balise;
+	// }
 
 	static createActionRemoveObject(name){
 
@@ -403,22 +403,22 @@ class SVGBuilder {
 		return $(domSVG);
 	}
 
-	static createActionRemove(name){
-		var balise = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" preserveAspectRatio="XMidYMid meet" name="del'+name+'">';
-		balise += '<title>Supprimer</title>';
-		balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
+	// static createActionRemove(name){
+	// 	var balise = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224" preserveAspectRatio="XMidYMid meet" name="del'+name+'">';
+	// 	balise += '<title>Supprimer</title>';
+	// 	balise += '<filter id="f1"><feGaussianBlur in="SourceGraphic" stdDeviation="0" /></filter>';
 
-		balise += '<line x1="72" y1="72" x2="48" y2="48" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
-		balise += '<line x1="152" y1="152" x2="176" y2="176" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
-		balise += '<line x1="72" y1="152" x2="48" y2="176" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
-		balise += '<line x1="152" y1="72" x2="176" y2="48" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
+	// 	balise += '<line x1="72" y1="72" x2="48" y2="48" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
+	// 	balise += '<line x1="152" y1="152" x2="176" y2="176" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
+	// 	balise += '<line x1="72" y1="152" x2="48" y2="176" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
+	// 	balise += '<line x1="152" y1="72" x2="176" y2="48" style="stroke:rgb(255,0,0);stroke-width:12" filter="url(#f1)" />';
 
-		balise += '<line x1="112" y1="80" x2="112" y2="32" style="stroke:rgb(255,0,0);stroke-width:8" />';
-		balise += '<line x1="32" y1="112" x2="80" y2="112" style="stroke:rgb(255,0,0);stroke-width:8"  />';
-		balise += '<line x1="112" y1="144" x2="112" y2="192" style="stroke:rgb(255,0,0);stroke-width:8" />';
-		balise += '<line x1="144" y1="112" x2="192" y2="112" style="stroke:rgb(255,0,0);stroke-width:8" />';
-		balise += '<polygon points="160,224 168,184 216,184 112,112" style="fill:red;stroke:purple;stroke-width:8" />';
-		balise += '</svg>';
-		return balise;
-	}
+	// 	balise += '<line x1="112" y1="80" x2="112" y2="32" style="stroke:rgb(255,0,0);stroke-width:8" />';
+	// 	balise += '<line x1="32" y1="112" x2="80" y2="112" style="stroke:rgb(255,0,0);stroke-width:8"  />';
+	// 	balise += '<line x1="112" y1="144" x2="112" y2="192" style="stroke:rgb(255,0,0);stroke-width:8" />';
+	// 	balise += '<line x1="144" y1="112" x2="192" y2="112" style="stroke:rgb(255,0,0);stroke-width:8" />';
+	// 	balise += '<polygon points="160,224 168,184 216,184 112,112" style="fill:red;stroke:purple;stroke-width:8" />';
+	// 	balise += '</svg>';
+	// 	return balise;
+	// }
 }
