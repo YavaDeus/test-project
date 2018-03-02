@@ -71,14 +71,10 @@ function proceed()
 			id: "savePage"
 		});
 
-		//var textButton = '<button id="savePage">';
 		let objectCircle = SVGBuilder.createActionCircleObject("orange", "openGEH", "Mémoriser la page dans Genius Editor Helper", true);
-		//textButton += '</button>';
 		objectCircle.appendTo(objectButton);
 		objectButton.appendTo(buttonContainer);
-		//buttonContainer.append(textButton);
 
-		//var saveButton = $("button#savePage");
 		objectButton.on("click", function () {
 			theLastPage = createLastPage();
 			savePage(theLastPage);
@@ -96,7 +92,7 @@ function proceed()
 function savePage(currentPage)
 {
 	StorageManager.readActionList('geniusSavedPages', function(saveList) {
-		saveList.add(currentPage, 3);
+		saveList.add(currentPage, 10);
 		StorageManager.saveActionList('geniusSavedPages', saveList);
 	});
 }

@@ -4,7 +4,6 @@ var linkArea = new Array(
 	{class:"references", color: "green"},
 	{class: "savedpages", color: "orange"},
 	{class: "lastpage", color: "red"});
-//var colorList = new Array("green","orange","red");
 
 var activeGroupe = false;
 
@@ -45,10 +44,7 @@ function appendTags(actionList) {
 				text: item.label
 			});
 
-			//let objectText = $(item.label);
-			//objectText.appendTo(objectLien);
 			objectSpan.appendTo(objectLigne);
-			//var textLigne = '<div class="ligne"><span name="' + item.name + '">' + item.label + '</span></div>';
 
 			divTags.append(objectLigne);
 		}
@@ -76,8 +72,6 @@ function appendLinks(linkAreaIndex, actionList) {
 		var addClass = "."+linkArea[linkAreaIndex].class;
 
 		var divLinks = $(addClass);
-		//console.log(addclass);
-		//console.log(divLinks);
 		for (let item of actionList.actions) {
 			let objectLigne = $('<div>', {
 				class:"ligne level" + item.level
@@ -90,8 +84,6 @@ function appendLinks(linkAreaIndex, actionList) {
 				text: item.label
 			});
 
-			//let objectText = $(item.label);
-			//objectText.appendTo(objectLien);
 			objectLien.appendTo(objectLigne);
 
 			if (item.childs && item.childs.actions.length > 0 && linkAreaIndex < 2)
@@ -100,12 +92,25 @@ function appendLinks(linkAreaIndex, actionList) {
 				objectTriangle.appendTo(objectLigne);
 			}
 
-			//let textLigne = '<div class="ligne level' + item.level + '"><a name="' + item.name + '" class="lien" '+(item.tooltip ? 'title="'+item.tooltip+'"' : '' )+'>' + item.label + '</a>';
 			if (item.level == 1 && linkAreaIndex > 0)
 			{
 				let tooltip = 'Mémoriser dans les '+(addClass == ".lastpage" ? "pages courantes" : (addClass == ".savedpages" ? "pages de référence" : "??"));
 				let objectCircle = SVGBuilder.createActionCircleObject(linkArea[linkAreaIndex-1].color, item.name, tooltip, true);
 				objectCircle.appendTo(objectLigne);
+
+				let objectCircleRemove;
+				if (linkAreaIndex == 1)
+				{
+					objectCircleRemove =  SVGBuilder.createActionRemoveObject(item.name);
+					objectCircleRemove.appendTo(objectLigne);
+
+					objectCircleRemove.on("click", function () {
+						actionList.deleteByName(item.name);
+						StorageManager.saveActionList('geniusSavedPages', actionList);
+						objectLigne.remove();
+						$(addClass+' div.groupe[name="gr' + item.name+'"]').remove();
+					});
+				}
 
 				objectCircle.on("click", function () {
 					var listDestination;
@@ -118,39 +123,29 @@ function appendLinks(linkAreaIndex, actionList) {
 								StorageManager.saveActionList('geniusSavedPages', actionList, function() {
 									window.close();
 								});
+								//objectLigne.detach().appendTo($("."+linkArea[linkAreaIndex - 1].class));
+								//objectCircle.remove();
+								//objectCircleRemove && objectCircleRemove.remove();
+								//$(addClass+' div.groupe[name="gr' + item.name+'"]')
+								//$(addClass+' div.groupe[name="gr' + item.name+'"]').detach().appendTo($("."+linkArea[linkAreaIndex - 1].class));
 							});
 						});
 					}
 					else
 					{
 						StorageManager.readActionList('geniusSavedPages', function(saveList) {
-							item = saveList.add(item, 3);
+							item = saveList.add(item, 10);
 							StorageManager.saveActionList('geniusSavedPages', saveList, function() {
 								window.close();
 							});
+							//objectLigne.appendTo($("."+linkArea[linkAreaIndex - 1].class));
+							//$(addClass+' div.groupe[name="gr' + item.name+'"]').appendTo($("."+linkArea[linkAreaIndex - 1].class));
 						});
 					}
 				});
-
-				if (linkAreaIndex == 1)
-				{
-					let objectCircleRemove =  SVGBuilder.createActionRemoveObject(item.name);
-					objectCircleRemove.appendTo(objectLigne);
-
-					objectCircleRemove.on("click", function () {
-						actionList.deleteByName(item.name);
-						StorageManager.saveActionList('geniusSavedPages', actionList);
-						objectLigne.remove();
-						//$("div.ligne.level1 a.lien[name='" + item.name + "']").parent().remove();
-						$(addClass+' div.groupe[name="gr' + item.name+'"]').remove();
-					});
-				}
 			}
-			//textLigne += '</div>';
 			objectLigne.appendTo(divLinks);
 
-			//divLinks.append(textLigne);
-			console.log(item.childs);
 			let objectGroupe;
 			if (item.childs && item.childs.actions.length > 0)
 			{
@@ -159,11 +154,7 @@ function appendLinks(linkAreaIndex, actionList) {
 					class:"ligne groupe"+(linkAreaIndex ==2 ? ' fixe' : ''),
 					name: "gr" + item.name
 				});
-				//var textgroupe = '<div class="groupe" name="gr' + item.name + '">';
-				//textgroupe += '</div>';
 				objectGroupe.appendTo(divLinks);
-				//divLinks.append(textgroupe);
-				//var divGroupe = $(addclass+' div.groupe[name="gr' + item.name+'"]');
 				
 				for (let subitem of item.childs.actions) {
 					let objectSubLigne = $('<div>', {
@@ -177,35 +168,18 @@ function appendLinks(linkAreaIndex, actionList) {
 						text: subitem.label
 					});
 		
-					//let objectText = $(item.label);
-					//objectText.appendTo(objectLien);
 					objectSubLien.appendTo(objectSubLigne);
-					//let subtextLigne = '<div class="ligne level' + subitem.level + '"><a name="' + subitem.name + '" class="lien" '+(subitem.tooltip ? 'title="'+subitem.tooltip+'"' : '' )+'>' + subitem.label + '</a>';
-					//subtextLigne += '</div>';
 					objectSubLigne.appendTo(objectGroupe);
-					//divGroupe.append(subtextLigne);
 
-					//var lien = $(addclass+" a.lien[name='" + subitem.name + "']");
 					objectSubLien.on("click", function () {
 						openTab(subitem.url);
 					});
 				}
-
-				
-				
-
-				/*objectLigne.on("mouseout", function () {
-					console.log("mouseout");
-					objectGroupe.removeClass("visible");
-				});*/
 			}
 
 			objectLigne.on("mouseover", function () {
-				console.log("mouseover");
-				console.log(objectGroupe);
 				if (objectGroupe != activeGroupe)
 				{
-					console.log("titu");
 					!activeGroupe || activeGroupe.removeClass("visible");
 					if (linkAreaIndex != 2 && objectGroupe)
 					{
@@ -217,13 +191,9 @@ function appendLinks(linkAreaIndex, actionList) {
 				}
 			});
 			
-			//var lien = $(addclass+" a.lien[name='" + item.name + "']");
 			objectLien.on("click", function () {
 				openTab(item.url);
 			});
-			//let upSVG = $(addclass+" svg[name='up" + item.name + "']");
-			
-			//let delSVG = $(addclass+" svg[name='del" + item.name + "']");
 			
 		}
 	}
@@ -267,25 +237,18 @@ function initLists() {
 	console.log('Init done ');
 }
 function initGraphics() {
-	//var addClass = 'div.lastpage';
-	//var textLigne = SVGBuilder.createActionCircle(addClass, 'title1', 'Tune up your Genius', true);
 	var objectLigne = SVGBuilder.createActionCircleObject(linkArea[1].color, 'title1', 'Tune up your Genius', true);
-	//console.log(objectLigne);
 	var divLine = $(".title span");		
-	//divLine.prepend(textLigne);
 	divLine.prepend(objectLigne);
 
-	//addClass = 'div.savedpages';
 	objectLigne = SVGBuilder.createActionCircleObject(linkArea[0].color, 'subtitle1');
 	divLine = $(".s1.subtitle");		
 	divLine.prepend(objectLigne);
 
-	//addClass = 'div.lastpage';
 	objectLigne = SVGBuilder.createActionCircleObject(linkArea[1].color, 'subtitle2');
 	divLine = $(".s2.subtitle");
 	divLine.prepend(objectLigne);
 
-	//addClass = 'red';
 	objectLigne = SVGBuilder.createActionCircleObject(linkArea[2].color, 'subtitle3');
 	divLine = $(".s3.subtitle");
 	divLine.prepend(objectLigne);
