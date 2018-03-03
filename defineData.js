@@ -157,9 +157,9 @@ class ActionList {
 
 	add(action, limit) {
 		//Gestion des doublons de liens
+		var name;
 		if (this.type.endsWith("Link"))
 		{
-			var name;
 			for (let item of this.actions) {
 				if (item.url === action.url && item.level === action.level)
 				{
@@ -171,16 +171,18 @@ class ActionList {
 				this.deleteByName(name);
 
 		}
+		let shift = 0;
 		if (this.length >= limit)
 		{
 			this.actions.shift();
+			shift = 1;
 		}
 
 		action.id = this.nextId();
 		action.listName = this.name;
 
 		this.actions.push(action);
-		return action;
+		return {item : action, shift : shift, nameDuplicate : name};
 	}
 
 	addDedupeLink(action)

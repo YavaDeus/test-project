@@ -35,20 +35,24 @@ function appendTags(actionList) {
 	if (actionList) {
 		var divTags = $("div.tags");
 		for (let item of actionList.actions) {
-			let objectLigne = $('<div>', {
-				class:"ligne"
-			});
-
-			let objectSpan = $('<span>', {
-				name: item.name,
-				text: item.label
-			});
-
-			objectSpan.appendTo(objectLigne);
-
-			divTags.append(objectLigne);
+			appendTag(divTags, item, actionList);
 		}
 	}
+}
+
+function appendTag(divTags, item, actionList) {
+	let objectLigne = $('<div>', {
+		class:"ligne"
+	});
+
+	let objectSpan = $('<span>', {
+		name: item.name,
+		text: item.label
+	});
+
+	objectSpan.appendTo(objectLigne);
+
+	divTags.append(objectLigne);
 }
 
 function listTags(preLoad, forceReload) {
@@ -69,134 +73,139 @@ function listTags(preLoad, forceReload) {
 
 function appendLinks(linkAreaIndex, actionList) {
 	if (actionList) {
-		var addClass = "."+linkArea[linkAreaIndex].class;
-
-		var divLinks = $(addClass);
-		for (let item of actionList.actions) {
-			let objectLigne = $('<div>', {
-				class:"ligne level" + item.level
-			});
-
-			let objectLien = $('<a>', {
-				name: item.name,
-				class:"lien",
-				title: item.tooltip,
-				text: item.label
-			});
-
-			objectLien.appendTo(objectLigne);
-
-			if (item.childs && item.childs.actions.length > 0 && linkAreaIndex < 2)
-			{
-				var objectTriangle = SVGBuilder.createTriangleObject();
-				objectTriangle.appendTo(objectLigne);
-			}
-
-			if (item.level == 1 && linkAreaIndex > 0)
-			{
-				let tooltip = 'Mémoriser dans les '+(addClass == ".lastpage" ? "pages courantes" : (addClass == ".savedpages" ? "pages de référence" : "??"));
-				let objectCircle = SVGBuilder.createActionCircleObject(linkArea[linkAreaIndex-1].color, item.name, tooltip, true);
-				objectCircle.appendTo(objectLigne);
-
-				let objectCircleRemove;
-				if (linkAreaIndex == 1)
-				{
-					objectCircleRemove =  SVGBuilder.createActionRemoveObject(item.name);
-					objectCircleRemove.appendTo(objectLigne);
-
-					objectCircleRemove.on("click", function () {
-						actionList.deleteByName(item.name);
-						StorageManager.saveActionList('geniusSavedPages', actionList);
-						objectLigne.remove();
-						$(addClass+' div.groupe[name="gr' + item.name+'"]').remove();
-					});
-				}
-
-				objectCircle.on("click", function () {
-					var listDestination;
-					if (linkAreaIndex == 1)
-					{
-						StorageManager.readActionList('geniusReferences', function(saveList) {
-							item = saveList.add(item);
-							StorageManager.saveActionList('geniusReferences', saveList, function() {
-								actionList.deleteByName(item.name);
-								StorageManager.saveActionList('geniusSavedPages', actionList, function() {
-									window.close();
-								});
-								//objectLigne.detach().appendTo($("."+linkArea[linkAreaIndex - 1].class));
-								//objectCircle.remove();
-								//objectCircleRemove && objectCircleRemove.remove();
-								//$(addClass+' div.groupe[name="gr' + item.name+'"]')
-								//$(addClass+' div.groupe[name="gr' + item.name+'"]').detach().appendTo($("."+linkArea[linkAreaIndex - 1].class));
-							});
-						});
-					}
-					else
-					{
-						StorageManager.readActionList('geniusSavedPages', function(saveList) {
-							item = saveList.add(item, 10);
-							StorageManager.saveActionList('geniusSavedPages', saveList, function() {
-								window.close();
-							});
-							//objectLigne.appendTo($("."+linkArea[linkAreaIndex - 1].class));
-							//$(addClass+' div.groupe[name="gr' + item.name+'"]').appendTo($("."+linkArea[linkAreaIndex - 1].class));
-						});
-					}
-				});
-			}
-			objectLigne.appendTo(divLinks);
-
-			let objectGroupe;
-			if (item.childs && item.childs.actions.length > 0)
-			{
-
-				objectGroupe = $('<div>', {
-					class:"ligne groupe"+(linkAreaIndex ==2 ? ' fixe' : ''),
-					name: "gr" + item.name
-				});
-				objectGroupe.appendTo(divLinks);
-				
-				for (let subitem of item.childs.actions) {
-					let objectSubLigne = $('<div>', {
-						class:"ligne level" + subitem.level
-					});
-
-					let objectSubLien = $('<a>', {
-						name: subitem.name,
-						class:"lien",
-						title: subitem.tooltip,
-						text: subitem.label
-					});
 		
-					objectSubLien.appendTo(objectSubLigne);
-					objectSubLigne.appendTo(objectGroupe);
-
-					objectSubLien.on("click", function () {
-						openTab(subitem.url);
-					});
-				}
-			}
-
-			objectLigne.on("mouseover", function () {
-				if (objectGroupe != activeGroupe)
-				{
-					!activeGroupe || activeGroupe.removeClass("visible");
-					if (linkAreaIndex != 2 && objectGroupe)
-					{
-						objectGroupe.addClass("visible");
-						activeGroupe = objectGroupe;
-					}
-					else
-						activeGroupe = undefined;
-				}
-			});
-			
-			objectLien.on("click", function () {
-				openTab(item.url);
-			});
-			
+		var divLinks = $("."+linkArea[linkAreaIndex].class);
+		for (let item of actionList.actions) {
+			appendLink(linkAreaIndex, divLinks, item, actionList);
 		}
 	}
+}
+
+function appendLink(linkAreaIndex, divLinks, item, actionList) {
+	let objectLigne = $('<div>', {
+		class:"ligne level" + item.level
+	});
+
+	let objectLien = $('<a>', {
+		name: item.name,
+		class:"lien",
+		title: item.tooltip,
+		text: item.label
+	});
+
+	objectLien.appendTo(objectLigne);
+
+	if (item.childs && item.childs.actions.length > 0 && linkAreaIndex < 2)
+	{
+		var objectTriangle = SVGBuilder.createTriangleObject();
+		objectTriangle.appendTo(objectLigne);
+	}
+
+	if (item.level == 1 && linkAreaIndex > 0)
+	{
+		let tooltip = 'Mémoriser dans les '+(linkAreaIndex == "2" ? "pages courantes" : (linkAreaIndex == "1" ? "pages de référence" : "orties"));
+		let objectCircle = SVGBuilder.createActionCircleObject(linkArea[linkAreaIndex-1].color, item.name, tooltip, true);
+		objectCircle.appendTo(objectLigne);
+
+		let objectCircleRemove;
+		if (linkAreaIndex == 1)
+		{
+			objectCircleRemove =  SVGBuilder.createActionRemoveObject(item.name);
+			objectCircleRemove.appendTo(objectLigne);
+
+			objectCircleRemove.on("click", function () {
+				actionList.deleteByName(item.name);
+				StorageManager.saveActionList('geniusSavedPages', actionList);
+				objectLigne.remove();
+				$("."+linkArea[linkAreaIndex].class+' div.groupe[name="gr' + item.name+'"]').remove();
+			});
+		}
+
+		objectCircle.on("click", function () {
+			var listDestination;
+			if (linkAreaIndex == 1)
+			{
+				StorageManager.readActionList('geniusReferences', function(saveList) {
+					var addResponse = saveList.add(item);
+					item = addResponse.item;
+					StorageManager.saveActionList('geniusReferences', saveList, function() {
+						actionList.deleteByName(item.name);
+						StorageManager.saveActionList('geniusSavedPages', actionList);
+						if (addResponse.shift)
+							$("."+linkArea[0].class+" .level1").first().remove();
+						if (addResponse.nameDuplicate)
+							$("."+linkArea[0].class+" .level1 [name="+addResponse.nameDuplicate+"]").parent().remove();
+						appendLink(0, $("."+linkArea[0].class), item, actionList);
+						objectLigne.detach();
+					});
+				});
+			}
+			else
+			{
+				StorageManager.readActionList('geniusSavedPages', function(saveList) {
+					var addResponse = saveList.add(item, 10);
+					item = addResponse.item;
+					StorageManager.saveActionList('geniusSavedPages', saveList, function() {
+						if (addResponse.shift)
+							$("."+linkArea[1].class+" .level1").first().remove();
+						if (addResponse.nameDuplicate)
+							$("."+linkArea[1].class+" .level1 [name="+addResponse.nameDuplicate+"]").parent().remove();
+						appendLink(1, $("."+linkArea[1].class), item, actionList);
+					});
+				});
+			}
+		});
+	}
+	objectLigne.appendTo(divLinks);
+
+	let objectGroupe;
+	if (item.childs && item.childs.actions.length > 0)
+	{
+
+		objectGroupe = $('<div>', {
+			class:"ligne groupe"+(linkAreaIndex == 2 ? ' fixe' : ''),
+			name: "gr" + item.name
+		});
+		objectGroupe.appendTo(divLinks);
+		
+		for (let subitem of item.childs.actions) {
+			let objectSubLigne = $('<div>', {
+				class:"ligne level" + subitem.level
+			});
+
+			let objectSubLien = $('<a>', {
+				name: subitem.name,
+				class:"lien",
+				title: subitem.tooltip,
+				text: subitem.label
+			});
+
+			objectSubLien.appendTo(objectSubLigne);
+			objectSubLigne.appendTo(objectGroupe);
+
+			objectSubLien.on("click", function () {
+				openTab(subitem.url);
+			});
+		}
+	}
+
+	objectLigne.on("mouseover", function () {
+		if (objectGroupe != activeGroupe)
+		{
+			!activeGroupe || activeGroupe.removeClass("visible");
+			if (linkAreaIndex != 2 && objectGroupe)
+			{
+				objectGroupe.addClass("visible");
+				activeGroupe = objectGroupe;
+			}
+			else
+				activeGroupe = undefined;
+		}
+	});
+	
+	objectLien.on("click", function () {
+		openTab(item.url);
+	});
 }
 
 
